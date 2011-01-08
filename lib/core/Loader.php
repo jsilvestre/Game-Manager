@@ -38,15 +38,16 @@ class Loader extends Library {
 	 * It actually DOES the loading whereas the Library::load() method does basically nothing but use this method. 
 	 * @param $type the type of the element to load (@see constants)
 	 * @param $name
+	 * @param GameManager $application the application instance
 	 * @uses Loader::T_LIBRARY
 	 * @uses Loader::T_CONFIG
 	 * @uses Loader::T_ACTION
 	 */
-	function load($type,$name) {
+	function load($type,$name,GameManager $app) {
 		
 		if(is_array($name)) {
 			foreach($name as $unit)
-				$this->load($type,$unit);
+				$this->load($type,$unit,$app);
 		}	
 		else {
 			$loadedObject = null;
@@ -57,26 +58,26 @@ class Loader extends Library {
 					break;
 				case self::T_LIBRARY:
 				case self::T_ACTION:
-					$loadedObject = $this->loadClass($type, $name);
+					$loadedObject = $this->loadClass($type,$name,$app);
 					break;
 			}
 			// two events or just one ?
 			if(!is_null($loadedObject)) {
-				$this->application->getDispatcher()->notify(new sfEvent($loadedObject,'loader.object_loaded'));
-				$this->application->getDispatcher()->notify(new sfEvent($loadedObject,'loader.'.$type.'.'.$name.'_loaded'));
+				$this->getDispatcher()->notify(new sfEvent($loadedObject,'loader.object_loaded'));
+				$this->getDispatcher()->notify(new sfEvent($loadedObject,'loader.'.$type.'.'.$name.'_loaded'));
 			}
 		}
 	}
 	
-	private function loadClass($type,$name) {
+	private function loadClass($type,$name,GameManager $app) {
 		
 		$indexName = strtolower($name);
 		
 		$refl = new ReflectionClass($name); // the include is made by autoloading
 		
-		$instance = $refl->newInstance($this->application);
+		$instance = $refl->newInstance($app);
 		
-		$this->application->getContainer($type)->offsetSet($indexName,$instance);		
+		$this->getContainer($type)->offsetSet($indexName,$instance);		
 	}
 	
 	private function loadConfig($type,$name) {
@@ -85,7 +86,7 @@ class Loader extends Library {
 		
 		$path = $folder.$name.'.php';
 
-		Factory::checkFileValidity($name,$folder);
+		Loader::checkFileValidity($name,$folder);
 		
 		require($path);
 		
@@ -95,7 +96,7 @@ class Loader extends Library {
 		if(!is_array(${$name}))
 			throw new WrongDataTypeEx($name,gettype(${$name}),"Array");
 					
-		$this->application->getContainer($type)->offsetSet($name, ${$name});
+		$this->getContainer($type)->offsetSet($name, ${$name});
 	}
 	
 	/**

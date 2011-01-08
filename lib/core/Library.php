@@ -47,16 +47,23 @@ abstract class Library {
 	}
 	
 	/**
-	 * Load an element into the application.
+	 * Load an element into the application. Alias the application load method.
 	 * @param string $type the element type
 	 * @param string $name
 	 * @access protected
-	 * @uses Loader::T_LIBRARY
-	 * @uses Loader::T_CONFIG
-	 * @uses Loader::T_ACTION
+	 * @uses GameManager::load()
 	 */
 	protected function load($type,$name) {
 		return $this->application->load($type, $name);
 	}
 	
+	/**
+	 * Alias the application getContainer method.
+	 * @param string containerName
+	 * @uses GameManager::getContainer()
+	 * @access protected
+	 */
+	protected function getContainer($containerName) {
+		return $this->application->getContainer($containerName);
+	}
 }

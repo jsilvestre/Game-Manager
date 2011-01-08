@@ -71,11 +71,19 @@ class GameManager extends Application {
 	 * @uses Loader::T_LIBRARY
 	 * @uses Loader::T_CONFIG
 	 * @uses Loader::T_ACTION
+	 * @see Loader::load()
 	 */
 	function load($type,$name) {
-		$this->getContainer(Loader::T_LIBRARY)->offsetGet('loader')->load($type,$name);
+		$this->getContainer(Loader::T_LIBRARY)->offsetGet('loader')->load($type,$name,$this);
 	}
 
+	/**
+	 * Returns the container collection instance. If the parameter $containerName is setted, it returns the $containerName collection.
+	 * @param string $containerName.Is null by default.
+	 * @uses Loader::T_LIBRARY
+	 * @uses Loader::T_CONFIG
+	 * @uses Loader::T_ACTION
+	 */
 	function getContainer($containerName=null) {
 		
 		if(isset($containerName) && $this->container->offsetExists($containerName))
