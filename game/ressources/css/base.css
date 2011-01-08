@@ -1,0 +1,317 @@
+/********************** GENERAL *****************************/
+body {
+	background-color: #0f0f0f;
+	margin: 0px;
+	padding: 0px;
+	
+	color: #eeeeee;
+	font-family: Verdana, Arial, sans-serif;
+	text-align: center;
+	vertical-align: top;
+	font-size: 11px;
+	
+	overflow: hidden;
+}
+
+p { margin: 0px 5px; }
+
+a:link, a:visited, a:active {
+	color: white;
+	text-decoration: none;
+}
+
+a:hover {
+	color: #c3c2c2;
+	text-decoration: none;
+}
+
+a img { border: 0px solid #000000; }
+
+textarea { font-family: Arial; padding: 5px; }
+
+
+/* MISE EN PAGE */
+#detection-bar {
+	float: left;	
+	width: 25%;
+	/*border: 1px solid red;*/
+	height: 100%;
+	overflow-y: auto;	
+	overflow-x: hidden;
+}
+
+#content {
+	width: 75%;
+	margin-left:25.1%;
+	height: 100%;
+	/*border: 1px solid blue;*/
+}
+
+#content #main-content {
+	width: 100%;
+	height: 75%;
+	/*border: 1px solid green;*/
+}
+
+#content #off-content {
+	width: 100%;
+	height:20%;
+	/*border: 1px solid orange;*/
+}
+
+#content #menu-bar {
+	width: 100%;
+	height:5%;
+	border: 1px solid #444444;
+	background-color: #2a2a2a;
+}
+
+* .generic-frame {
+	width: 100%;
+	height: 100%;
+
+	margin: auto;
+	text-align: left;
+	background: #1a1a1a;
+	border-left: #2e2e2e 1px solid;
+	border-right: #2e2e2e 1px solid;	
+}
+
+* .horizontal-line {
+	width: 100%;
+	height: 0.5px;
+	background-color: #2e2e2e;
+	margin: 3px 0px; /* 3px est le max pour le margin-top sinon la barre disparait */
+}
+
+/*
+	OFF-CONTENT
+*/
+#content #off-content .off-frame  {
+	width: 33%;
+	height: 100%;
+	float: left;
+}
+/*
+	FIN OFF-CONTENT
+*/
+
+
+
+
+/*
+	DETECTION
+*/
+#detection-bar .element-dark, #detection-bar .element-light {
+	width: 100%;
+	height: 10%;
+	border-top: 1px solid #2e2e2e;
+	border-bottom: 1px solid #2e2e2e;
+
+	background-color: #313131;
+}
+
+#detection-bar .element-light {
+	background-color: #4a4a4a;
+}
+/*
+	FIN DETECTION
+*/
+
+
+/* JEU */
+* h1 {
+	font-size: 10px;
+	font-weight: 400;
+	width: 100%;
+	margin: auto;
+	border: #2e2e2e 1px solid; 
+	background: #222222; 
+	padding-bottom: 2px; 
+	padding-top: 2px;
+	text-align: center;
+}
+
+/* DEPLACEMENT */
+.deplacement {
+	width: 150px;
+	margin: auto;
+	padding-bottom: 2px; 
+	padding-top: 2px; 
+	font-size: 12px;
+	text-align: center;
+	background: #313131;
+	border-bottom: #2e2e2e 1px solid;
+	border-left: #2e2e2e 1px solid;
+	border-right: #2e2e2e 1px solid;	
+}
+
+.deplacement table {
+	margin: auto;	
+}
+
+.deplacement table tr td {
+	height: 29px;
+	width: 32px;	
+}
+
+/* FICHE PERSO */
+/*.statut_perso {
+	width: 100%;
+	height: auto;
+	margin: auto;
+	text-align: left;
+	background: #101010;
+	border-bottom: #2e2e2e 1px solid;
+	border-left: #2e2e2e 1px solid;
+	border-right: #2e2e2e 1px solid;
+}*/
+
+table { margin: auto; text-align: center;}
+
+tr.map { height: 60px; }
+td.map { width: 60px; }
+
+td.cardinal { font-size: 12px;}
+
+/*
+	MENU-BAR
+*/
+#content #menu-bar ul {
+	padding: 0; margin: 0;
+	float: left;
+	width: 100%;
+	height: 100%;
+	list-style: none;
+	font-size: 1.1em;	
+}
+
+#content #menu-bar ul li{
+	padding: 0; margin: 0;
+	float: left;
+	position: relative;
+	height: 100%;
+	/*border-right: 1px solid #bbb;*/
+}
+
+#content #menu-bar ul li a{
+	padding: 5px;
+	float: left;
+	/*text-indent: -9999px; /*--For text replacement - Shove text off of the page--*/
+	/*height: 16px; /*width: 16px;*/
+	height:100%;
+	text-decoration: none;
+	color: #eee;
+	position: relative;
+
+}
+#content #menu-bar ul li a:hover{	background-color: #3a3a3a; }
+#content #menu-bar ul li a.active { /*--Active state when sub-panel is open--*/
+	background-color: #313131;
+	/*height: 17px;*/
+	/*margin-top: -2px; /*--Push it up 2px to attach the active button to sub-panel--*/
+	border: 1px solid #555;
+	border-top: none;
+	z-index: 200; /*--Keeps the active link on top of the sub-panel--*/
+	position: relative;
+}
+
+#content #menu-bar a small {
+	text-align: center;
+	width: 70px;
+	/*: url(pop_arrow.gif) no-repeat center bottom;*/
+	padding: 5px 5px 11px;
+	display: none; /*--Hide by default--*/
+	color: #fff;
+	font-size: 1em;
+	text-indent: 0;
+}
+#content #menu-bar a:hover small{
+	display: block; /*--Show on hover--*/
+	position: absolute;
+	top: -35px; /*--Position tooltip 35px above the list item--*/
+	left: 50%;
+	margin-left: -40px; /*--Center the tooltip--*/
+	z-index: 9999;
+}
+
+#content #menu-bar ul li div a { /*--Reset link style for sub-panel links--*/
+	text-indent: 0;
+	width: auto;
+	height: auto;
+	padding: 0;
+	float: none;
+	color: #00629a;
+	position: static;
+}
+
+#content #menu-bar .subpanel {
+	position: absolute;
+	left: 0; bottom: 33px;
+	display: none;	/*--Hide by default--*/
+	border-top: 1px solid #444;
+	border-left: 1px solid #444;
+	border-right: 1px solid #444;
+	background: #313131;
+	overflow: hidden;
+}
+
+#content #menu-bar .subpanel ul{
+	padding: 0; margin: 0;
+	/*background: #fff;*/
+	width: 100%;
+	overflow: auto;
+	padding-bottom: 2px;
+}
+#content #menu-bar .subpanel li{
+	float: none; /*--Reset float--*/
+	display: block;
+	padding: 0; margin: 0;
+	overflow: hidden;
+	clear: both;
+	/*background: #fff;*/
+	position: static;  /*--Reset relative positioning--*/
+	font-size: 0.9em;
+}
+
+#content #menu-bar h3 {
+	background: #526ea6;
+	padding: 5px 10px;
+	color: #fff;
+	font-size: 1.1em;
+	cursor: pointer;
+}
+#content #menu-bar h3 span { /*--Right aligned "-" icon--*/
+	font-size: 1.5em;
+	float: right;
+	line-height: 0.6em;
+	font-weight: normal;
+}
+
+#group-panel .subpanel li span {
+	padding: 5px;
+	/*background: #fff;*/
+	/*color: #777;*/
+	float: left;
+}
+
+#group-panel .subpanel li a{
+	padding: 3px 0;	margin: 0;
+	line-height: 22px;
+	height: 22px;
+	/*background: #fff;*/
+	display: block;
+}
+#group-panel .subpanel li a:hover {
+	/*background: #3b5998;*/
+	color: #fff;
+	text-decoration: none;
+}
+
+/* Pour aligner à droite les éléments du menu */
+#content #menu-bar li#deconnexion, #content #menu-bar li#forum, #content #menu-bar li#option {
+	float: right;
+}
+/*
+	FIN MENU-BAR
+*/
