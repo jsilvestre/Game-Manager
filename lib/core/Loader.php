@@ -42,6 +42,8 @@ class Loader extends Library {
 	 * @uses Loader::T_LIBRARY
 	 * @uses Loader::T_CONFIG
 	 * @uses Loader::T_ACTION
+	 * @dispatches loader.object_loaded event when a something is loaded
+	 * @dispatches loader.$type.$name_loaded when the $name thing is loaded
 	 */
 	function load($type,$name,GameManager $app) {
 		
@@ -159,7 +161,7 @@ class Loader extends Library {
 	private static function executeAutoload($className,$folder) {
 		
 		// we use the sfFinder class to find out where the file is
-		$path = sfFinder::type('file')->name($className.'.php')->in($folder);
+		$path = sfFinder::type('file')->name($className.'.php')->in(self::getAppPath().$folder);
 		if(count($path)>0 && file_exists($path[0])) {
 			require_once($path[0]);
 			
@@ -167,5 +169,10 @@ class Loader extends Library {
 				throw new ClassNotFoundEx($className,$path[0]);
 		}
 	}
+	
+	public static function getAppPath() {
+		return realpath(dirname(__FILE__) . '/../..').'/';
+	}
+	
 	
 }

@@ -1,7 +1,18 @@
 <?php
+/**
+ * Collection class.
+ * 
+ * The collection class extends the ArrayObject class to provide a type check.
+ *
+ * @package     GameManager
+ * @subpackage	Collection
+ * @author      Joseph Silvestre <contact@jsilvestre.fr>
+ * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link        http://game-manager.jsilvestre.fr
+ * @since       1.0
+ */
 
 class Collection extends ArrayObject {
-	
 	
 	/**
 	 * The collection type

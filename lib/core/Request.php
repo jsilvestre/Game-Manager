@@ -3,7 +3,7 @@
  * Request class.
  * 
  * Represents what the url has requested to the application.
- * The application creates a Request object via its Router library.
+ * The application provides a Request object to its Router library that will set it properly.
  *
  * @package     GameManager
  * @subpackage	Request
@@ -18,16 +18,16 @@ class Request {
 	/**
 	 * Collection of Routes
 	 * @var array of Route object
-	 * @access private
+	 * @access protected
 	 */
-	private $_routes;
+	private $routes;
 	
 	/**
 	 * Collection of Information about the user and the url itself that request the URL
 	 * @var array
 	 * @access private
 	 */
-	private $_information;
+	protected $information;
 	
 	/**
 	 * Index for the User IP information
@@ -54,8 +54,8 @@ class Request {
 	 * @access private
 	 */
 	private function _init() {
-		$this->_routes = array();
-		$this->_information = array(
+		$this->routes = array();
+		$this->information = array(
 								self::USER_IP		=> null,
 								self::REQUEST_TYPE	=> Router::T_COMPLETE_LOADING	
 							);
@@ -67,10 +67,10 @@ class Request {
 	 * @throws Exception
 	 */
 	function addRoute(Route $route) {
-		if(array_key_exists($route->getId(), $this->_routes))
-			throw new Exception("can't have two routes with the same ID target");
+		if(array_key_exists($route->getId(), $this->routes))
+			throw new RuntimeException("can't have two routes with the same ID target");
 			
-		$this->_route[$route->getId()] = $route;
+		$this->routes[$route->getId()] = $route;		
 	}
 	
 	/**
@@ -80,10 +80,10 @@ class Request {
 	 * @throws OutOfBoundsException
 	 */
 	function getRoute($index) {
-		if(!array_key_exists($index, $this->_routes))
-			throw new OutOfBoundsException("Index ".$index." not in array _information");
+		if(!array_key_exists($index, $this->routes))
+			throw new OutOfBoundsException("Index ".$index." not in array _routes");
 			
-		return $this->_routes[$index];
+		return $this->routes[$index];
 	}
 
 	/**
@@ -91,7 +91,7 @@ class Request {
 	 * @return array
 	 */
 	function getAllRoutes() {
-		return $this->_routes;
+		return $this->routes;
 	}
 	
 	/**
@@ -99,7 +99,7 @@ class Request {
 	 * @return int
 	 */
 	function requestSize() {
-		return count($this->_routes);
+		return count($this->routes);
 	}
 	
 	/**
@@ -118,10 +118,10 @@ class Request {
 	 * @uses Constants of the Request class. 
 	 */
 	function setInformation($index,$value) {
-		if(!array_key_exists($index, $this->_information))
+		if(!array_key_exists($index, $this->information))
 			throw new OutOfBoundsException("Index ".$index." not in array _information");
 			
-		$this->_information[$index] = $value;
+		$this->information[$index] = $value;
 	}
 	
 	/**
@@ -144,10 +144,10 @@ class Request {
 	 * @uses Constants of the Request class.
 	 */
 	function getInformation($index) {
-		if(!array_key_exists($index, $this->_information))
+		if(!array_key_exists($index, $this->information))
 			throw new OutOfBoundsException("Index ".$index." not in array _information");
 			
-		return $this->_information[$index];
+		return $this->information[$index];
 	}
 	
 	/**
@@ -155,6 +155,6 @@ class Request {
 	 * @return array
 	 */
 	function getAllInformation() {
-		return $this->_information;
+		return $this->information;
 	}
 }

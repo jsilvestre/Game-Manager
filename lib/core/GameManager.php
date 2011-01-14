@@ -29,19 +29,31 @@ class GameManager extends Application {
 	 */
 	protected $container = null;
 	
+	/**
+	 * The request instance
+	 * @var Request
+	 * @access protected
+	 */
 	protected $request = null;
-	
+
+	/**
+	 * The response instance
+	 * @var Response
+	 * @access protected
+	 */
 	protected $response = null;
 	
 	/**
 	 * Builds the application object
 	 * @param sfEventDispatcher $dispatcher the event dispatcher of the application
+	 * @param Request $request the request object
+	 * @param Response $response the response object
 	 */	
-	function __construct(sfEventDispatcher $dispatcher) {
-		$this->dispatcher = $dispatcher;
+	function __construct(sfEventDispatcher $dispatcher, Request $request, Response $response) {
 		
-		$this->request = new Request();
-		$this->response = new Response();
+		$this->dispatcher = $dispatcher;
+		$this->request = $request;
+		$this->response = $response;
 		
 		// we create a container that will contains other containers
 		$this->container = new Collection("Collection");
@@ -52,16 +64,12 @@ class GameManager extends Application {
 	}
 	
 	/**
-	 * Initializes the application object
+	 * Initializes the application object by creating the Loader object and autoloading core libraries /configs
 	 */
 	function init() {		
 		$this->getContainer(Loader::T_LIBRARY)->offsetSet('loader', new Loader($this)); //now we can use the loading method
 		
-		
-		$this->load(Loader::T_LIBRARY,array('Router','Session'));
-		
-		//$this->getContainer(Loader::T_CONFIG)->offsetGet('base');
-
+		$this->load(Loader::T_LIBRARY,array('Router','Session','Security'));
 	}
 	
 	/**
@@ -74,7 +82,8 @@ class GameManager extends Application {
 	 * @see Loader::load()
 	 */
 	function load($type,$name) {
-		$this->getContainer(Loader::T_LIBRARY)->offsetGet('loader')->load($type,$name,$this);
+		if($this->getContainer(Loader::T_LIBRARY)->offsetExists('loader'))
+			$this->getContainer(Loader::T_LIBRARY)->offsetGet('loader')->load($type,$name,$this);
 	}
 
 	/**
@@ -92,32 +101,27 @@ class GameManager extends Application {
 			return $this->container;
 	}
 	
+	/**
+	 * Gets the request object
+	 * @return Request
+	 */
 	function getRequest() {
 		return $this->request;
 	}
-	
+
+	/**
+	 * Gets the response object
+	 * @return Response
+	 */
 	function getResponse() {
 		return $this->response;
 	}
 	
+	/**
+	 * Get the event dispatcher object
+	 * @return sfEventDispatcher
+	 */
 	function getDispatcher() {
 		return $this->dispatcher;
 	}
-	
-	/**
-	 * Enter description here ...
-	 * @deprecated
-	 */
-	function listen() {
-		$this->dispatcher->connect('router.app_routed', array($this, 'action'));
-	}
-
-	/**
-	 * Enter description here ...
-	 * @deprecated
-	 */
-	function action(sfEvent $event) {
-		var_dump($event);
-	}
-
 }

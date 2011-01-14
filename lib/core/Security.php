@@ -9,11 +9,14 @@
  * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
  * @link        http://game-manager.jsilvestre.fr
  * @since       1.0
- * @todo refondre et documenter la classe Security
+ * @todo refondre et documenter la classe Security.pourquoi pas avec un pattern "filter"
  */
 
 class Security extends Library {
 	
+	/**
+	 * Sanitize both GET and POST global array to avoid XSS attack.
+	 */
 	public function protectGlobal() {
 		foreach($_POST as $k => $v) {
 			$_POST[$this->protectXss($k)] = self::protectXss($v);
@@ -25,11 +28,11 @@ class Security extends Library {
 	}
 	
 	/**
-	* Modify the $data in order to protect it against xss attack.
+	* Modify the $data in order to protect it against XSS attack.
 	*
 	* @static
 	*
-	* @param $data
+	* @param string $data
 	* @return string
 	*/
 	public static function protectXss($data) {

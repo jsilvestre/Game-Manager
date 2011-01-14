@@ -90,8 +90,7 @@ class Response {
 	 * @param mixed $content
 	 */
 	function addContent($content) {
-		//if(!in_array($content,$this->_contents))
-			$this->_contents[] = $content;
+		$this->_contents[] = $content;
 	}
 	
 	/**

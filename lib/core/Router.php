@@ -18,30 +18,49 @@
 class Router extends Library {
 	
 	/**
-	* Type of request constant : complete loading
+	* Type of request constant : complete loading. "T" is for "Type".
 	*/
 	const T_COMPLETE_LOADING 	= "completeLoading";
 
 	/**
-	 * Type of request constant : part loading
+	 * Type of request constant : part loading. "T" is for "Type".
 	 */
 	const T_PART_LOADING		= "partLoading";
+	
+	/**
+	 * The string for the requestType parameter in the URL. "U" is for "URL".
+	 */
+	const U_REQUEST_TYPE		= "requestType";
 
+	/**
+	 * The array containing the options for the URL. It will basically be the GET global.
+	 * @var array
+	 * @access protected
+	 */
+	protected $sourceArray;
+	
+	/**
+	 * {@inheritdoc}
+	 */
+	protected function init() {
+		$this->setSourceArray(array());
+	} 
+	
 	/**
 	* Creates the routes.
 	* Creates the routes from the URL and add them to the Request object
 	* @param Request the request object of the application
 	* @dispatches router.after_routing sfEvent at the end of the method
-	* @throws InvalidRouteEx if a url is not valid.
+	* @throws InvalidRouteEx if the url is not valid.
 	*/
 	public function processRouting(Request $request) {
 		
 		$request->setInformation(Request::REQUEST_TYPE, $this->getRequestTypeFromUrl());
 						
-		foreach($_GET as $id => $target) {
+		foreach($this->sourceArray as $id => $target) {
 			
 			// do not secure the parameters themselves, only check the action-method-param1:param2 pattern
-			$pattern = "#^[a-z/]+((-[a-z]+)?|(-[a-z]+){1}(-[a-z0-9:]+)?)$#";
+			$pattern = "#^[a-z/]+((-[a-z]+)?|(-[a-z]+){1}(-(:?([a-z0-9])+)+)?)$#";
 			
 			if(preg_match($pattern,$target)) {
 				
@@ -68,9 +87,9 @@ class Router extends Library {
 				throw new InvalidRouteEx($id,$target);
 			}
 		}
-		
+		//var_dump($request);
 		// we notify that routing is done and we pass the Request object to the listeners.
-		$this->getDispatcher()->notify(new sfEvent($request, 'router.after_routing'));
+		$this->getEventDispatcher()->notify(new sfEvent($request, 'router.after_routing'));
 	}
 	
 	/**
@@ -82,7 +101,7 @@ class Router extends Library {
 	* 		// will link to one hud element
 	* 		$targets = array(array('id','action','method',array('param1','param2')));
 	* 		// will link to two hud elements
-	* 		$targets2 = array(array('id','action','method'),array('id2,'action2','method2'));
+	* 		$targets2 = array(array('id','action','method'),array('id2','action2','method2'));
 	* 	?>
 	* </code>
 	* 
@@ -92,7 +111,7 @@ class Router extends Library {
 	*/
 	static function makeURL(array $targets) {
 		
-		$url = "requestType=".self::T_PART_LOADING.'&';
+		$url = self::U_REQUEST_TYPE."=".self::T_PART_LOADING.'&';
 		
 		foreach($targets as $target) {
 			
@@ -133,16 +152,29 @@ class Router extends Library {
 	}
 
 	/**
-	* Retrieve the request type from url and set the Request object
+	* Retrieve the request type from url and returns it. Then it will destroy the index in the source array.
 	* @access private
 	*/	
 	private function getRequestTypeFromUrl() {
 		
-		if(isset($_GET["requestType"]) && $_GET["requestType"]==self::T_PART_LOADING) {
-			unset($_GET["requestType"]);
+		if(isset($this->sourceArray[self::U_REQUEST_TYPE])) {
+			$requestType = $this->sourceArray[self::U_REQUEST_TYPE];
+			unset($this->sourceArray[self::U_REQUEST_TYPE]);
+		}
+		
+		if(isset($requestType) && $requestType==self::T_PART_LOADING) {
 			return self::T_PART_LOADING;
 		}
-		else
+		else {			
 			return self::T_COMPLETE_LOADING;	
+		}
+	}
+	
+	/**
+	 * Sets the sourceArray attribute
+	 * @param array $sourceArray
+	 */
+	public function setSourceArray(array $sourceArray) {
+		$this->sourceArray = $sourceArray;
 	}
 }
