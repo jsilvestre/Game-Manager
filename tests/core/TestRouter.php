@@ -16,7 +16,7 @@ class TestRouter extends PHPUnit_Framework_TestCase {
 	protected $sourceArray;
 	
 	public function setUp() {
-		$app = new GameManager(new sfEventDispatcher(), new Request(), new Response());
+		$app = new GameManager(new sfEventDispatcher(), new Request(), new Response(),new Loader());
 		$this->router = new Router($app);
 		$this->request = new Request();
 	}

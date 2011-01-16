@@ -44,16 +44,44 @@ class GameManager extends Application {
 	protected $response = null;
 	
 	/**
+	 * The loader instance
+	 * @var Loader
+	 * @access protected
+	 */
+	protected $loader = null;
+	
+	/**
+	 * The configuration array
+	 * @var array
+	 * @access protected
+	 */
+	protected $configuration = null;
+
+	/**
+	 * The path of the config files (.php and .xml). 'P' is for Path.
+	 * @staticvar
+	 */
+	const P_CONFIG	= "game/ressources/";	
+	
+	/**
+	 * The name of the config files (.php and .xml). 'N' is for Name.
+	 * @staticvar
+	 */
+	const N_CONFIG	= "config";
+	
+	/**
 	 * Builds the application object
 	 * @param sfEventDispatcher $dispatcher the event dispatcher of the application
 	 * @param Request $request the request object
 	 * @param Response $response the response object
 	 */	
-	function __construct(sfEventDispatcher $dispatcher, Request $request, Response $response) {
+	function __construct(sfEventDispatcher $dispatcher, Request $request, Response $response, Loader $loader) {
 		
 		$this->dispatcher = $dispatcher;
 		$this->request = $request;
 		$this->response = $response;
+		$this->loader = $loader;
+		$this->loader->setApplication($this);
 		
 		// we create a container that will contains other containers
 		$this->container = new Collection("Collection");
@@ -67,9 +95,9 @@ class GameManager extends Application {
 	 * Initializes the application object by creating the Loader object and autoloading core libraries /configs
 	 */
 	function init() {		
-		$this->getContainer(Loader::T_LIBRARY)->offsetSet('loader', new Loader($this)); //now we can use the loading method
+		$this->load(Loader::T_LIBRARY,array('Hud','Router','Session','Security'));
 		
-		$this->load(Loader::T_LIBRARY,array('Router','Session','Security'));
+		$this->setConfiguration(self::P_CONFIG);
 	}
 	
 	/**
@@ -82,8 +110,7 @@ class GameManager extends Application {
 	 * @see Loader::load()
 	 */
 	function load($type,$name) {
-		if($this->getContainer(Loader::T_LIBRARY)->offsetExists('loader'))
-			$this->getContainer(Loader::T_LIBRARY)->offsetGet('loader')->load($type,$name,$this);
+		$this->getLoader()->load($type, $name);
 	}
 
 	/**
@@ -113,15 +140,72 @@ class GameManager extends Application {
 	 * Gets the response object
 	 * @return Response
 	 */
-	function getResponse() {
+	public function getResponse() {
 		return $this->response;
 	}
 	
 	/**
-	 * Get the event dispatcher object
+	 * Gets the event dispatcher object
 	 * @return sfEventDispatcher
 	 */
-	function getDispatcher() {
+	public function getEventDispatcher() {
 		return $this->dispatcher;
+	}
+	
+	/**
+	 * Gets the loader object
+	 * @return Loader
+	 */
+	public function getLoader() {
+		return $this->loader;
+	}
+	
+	/**
+	 * Set the configuration array. If the config.php file does not exist, we dump the config.xml file
+	 * @param string $path the path of the config.php file
+	 */
+	public function setConfiguration($path) {
+		
+		$target = $path.'/'.self::N_CONFIG; 
+		
+		if(file_exists($target.'.php')) {
+			include($target.'.php');
+			
+			$this->configuration = $config;
+		}
+		else {
+			// create the dumper
+			// dump the $target.'.xml' file to the $target.'.php' file
+			// call this function recursively in order to set the configuration array
+		}
+	}
+	
+	/**
+	 * Get the configuration array or one of the array of configuration
+	 * @param string $confType set only if you want to get a precise array. If you want to get all the arrays, let empty.
+	 * @throws OutOfBoundsException if you try to get a precise array that doesn't exist in the config array.
+	 */
+	public function getConfiguration($confType=null) {
+
+		if(is_null($confType)) {
+			return $this->configuration;
+		}
+		else {
+			if(array_key_exists($confType, $this->configuration)) {
+				return $this->configuration[$confType];
+			}
+			else {
+				throw new OutOfBoundsException("Index ".$confType." not in array configuration");
+			}
+		}
+	} 
+	
+	/**
+	 * Returns the absolute path of the application
+	 * @return string
+	 * @static
+	 */
+	public static function getPath() {
+		return realpath(dirname(__FILE__) . '/../..').'/';
 	}
 }

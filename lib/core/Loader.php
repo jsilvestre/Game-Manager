@@ -10,10 +10,10 @@
  * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
  * @link        http://game-manager.jsilvestre.fr
  * @since       1.0
- * @todo refactoring this class
+ * @todo refactoring this class : using the universal autoload from Symfony framework
  */
 
-class Loader extends Library {
+class Loader {
 	
 	/**
 	 * The type of element to load : library
@@ -32,24 +32,28 @@ class Loader extends Library {
 	 * @staticvar string
 	 */
 	const T_CONFIG = 'config';
-
+	
+	/**
+	 * The application object instance
+	 * @var GameManager
+	 * @access protected
+	 */	
+	protected $application = null;
+	
 	/**
 	 * Load an element to the application.
-	 * It actually DOES the loading whereas the Library::load() method does basically nothing but use this method. 
 	 * @param $type the type of the element to load (@see constants)
 	 * @param $name
-	 * @param GameManager $application the application instance
 	 * @uses Loader::T_LIBRARY
 	 * @uses Loader::T_CONFIG
 	 * @uses Loader::T_ACTION
 	 * @dispatches loader.object_loaded event when a something is loaded
-	 * @dispatches loader.$type.$name_loaded when the $name thing is loaded
 	 */
-	function load($type,$name,GameManager $app) {
+	function load($type,$name) {
 		
 		if(is_array($name)) {
 			foreach($name as $unit)
-				$this->load($type,$unit,$app);
+				$this->load($type,$unit);
 		}	
 		else {
 			$loadedObject = null;
@@ -60,26 +64,25 @@ class Loader extends Library {
 					break;
 				case self::T_LIBRARY:
 				case self::T_ACTION:
-					$loadedObject = $this->loadClass($type,$name,$app);
+					$loadedObject = $this->loadClass($type,$name);
 					break;
 			}
-			// two events or just one ?
+
 			if(!is_null($loadedObject)) {
-				$this->getDispatcher()->notify(new sfEvent($loadedObject,'loader.object_loaded'));
-				$this->getDispatcher()->notify(new sfEvent($loadedObject,'loader.'.$type.'.'.$name.'_loaded'));
+				$this->getApplication()->getEventDispatcher()->notify(new sfEvent($loadedObject,'loader.object_loaded'));
 			}
 		}
 	}
 	
-	private function loadClass($type,$name,GameManager $app) {
+	private function loadClass($type,$name) {
 		
 		$indexName = strtolower($name);
 		
 		$refl = new ReflectionClass($name); // the include is made by autoloading
 		
-		$instance = $refl->newInstance($app);
+		$instance = $refl->newInstance($this->getApplication());
 		
-		$this->getContainer($type)->offsetSet($indexName,$instance);		
+		$this->getApplication()->getContainer($type)->offsetSet($indexName,$instance);		
 	}
 	
 	private function loadConfig($type,$name) {
@@ -98,7 +101,7 @@ class Loader extends Library {
 		if(!is_array(${$name}))
 			throw new WrongDataTypeEx($name,gettype(${$name}),"Array");
 					
-		$this->getContainer($type)->offsetSet($name, ${$name});
+		$this->getApplication()->getContainer($type)->offsetSet($name, ${$name});
 	}
 	
 	/**
@@ -161,7 +164,7 @@ class Loader extends Library {
 	private static function executeAutoload($className,$folder) {
 		
 		// we use the sfFinder class to find out where the file is
-		$path = sfFinder::type('file')->name($className.'.php')->in(self::getAppPath().$folder);
+		$path = sfFinder::type('file')->name($className.'.php')->in(self::getPath().$folder);
 		if(count($path)>0 && file_exists($path[0])) {
 			require_once($path[0]);
 			
@@ -170,9 +173,33 @@ class Loader extends Library {
 		}
 	}
 	
-	public static function getAppPath() {
-		return realpath(dirname(__FILE__) . '/../..').'/';
+	/**
+	 * Gets the application object instance
+	 * @return GameManager
+ 	 * @access protected
+	 */
+	protected function getApplication() {
+		if(is_null($this->application))
+			throw new RuntimeException('Loader::getApplication. An application object must be set to the Loader.');
+			
+		return $this->application;
+	}
+	
+	/**
+	 * Sets the application object instance
+	 * @param GameManager $application
+	 */
+	public function setApplication(GameManager $application) {
+		$this->application = $application;
 	}
 	
 	
+	/**
+	 * Returns the absolute path of the application
+	 * @return string
+	 * @static
+	 */
+	public static function getPath() {
+		return realpath(dirname(__FILE__) . '/../..').'/';
+	}	
 }

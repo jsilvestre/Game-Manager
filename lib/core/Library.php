@@ -19,14 +19,14 @@ abstract class Library {
 	 * @var GameManager
 	 * @access private
 	 */
-	private $application;
+	private $_application;
 	
 	/**
 	 * Constructor
 	 */
 	function __construct(GameManager $app) {
 		
-		$this->application = $app;
+		$this->_application = $app;
 		
 		$this->init();
 	}
@@ -41,9 +41,10 @@ abstract class Library {
 	 * Get the event dispatcher instance
 	 * @return sfEventDispatcher
 	 * @access protected
+	 * @uses GameManager::getEventDispatcher();
 	 */
 	protected function getEventDispatcher() {
-		return $this->application->getDispatcher();
+		return $this->_application->getEventDispatcher();
 	}
 	
 	/**
@@ -54,7 +55,7 @@ abstract class Library {
 	 * @uses GameManager::load()
 	 */
 	protected function load($type,$name) {
-		return $this->application->load($type, $name);
+		return $this->_application->load($type, $name);
 	}
 	
 	/**
@@ -64,6 +65,6 @@ abstract class Library {
 	 * @access protected
 	 */
 	protected function getContainer($containerName) {
-		return $this->application->getContainer($containerName);
+		return $this->_application->getContainer($containerName);
 	}
 }
