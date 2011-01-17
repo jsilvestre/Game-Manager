@@ -10,10 +10,16 @@
  * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
  * @link        http://game-manager.jsilvestre.fr
  * @since       1.0
- * @todo must be design with the new xml+ dumper concept
+ * @todo must be design with the new xml + dumper concept
  */
 
 namespace GameManager\Core\Library;
+
+use GameManager\Core\Component\Request;
+
+use GameManager\Core\Application;
+use GameManager\Core\Component\Loader;
+use GameManager\Core\Library\Hud\HudElement;
 
 class Hud extends Library implements \GameManager\Core\IDisplayObject {
 	
@@ -31,30 +37,21 @@ class Hud extends Library implements \GameManager\Core\IDisplayObject {
 	}
 
 	/**
-	* Create the HUD from the descriptor file
-	*
-	* @param $fileName
+	* Create the HUD from the configuration
 	*/
-	function create($file) {
-	
-		$path = GameManager::getPath().'game/ressources/'.$file;
-	
-		if(!file_exists($path))
-			throw new FileNotFoundEx($path);
-	
-		$xml = simplexml_load_file($path); // we load the XML file
-		$xmlelements = get_object_vars($xml);
+	function create() {
+		
+		$appConf = $this->getContainer(Loader::T_CONFIG)->offsetGet(Application::N_CONFIG_APP);
+				
+		foreach($appConf["interface"] as $element) { // let's parse the different attributes
 
-		$elements = $xmlelements["interface"];
+			$id = $element['id'];
+			$action = $element['target']['action'];
+			$method = $element['target']['method'];
+			$params = $element['target']['params'];
 		
-		foreach($elements as $element) { // let's parse the different attributes
-			$id = (string) $element["id"]; 
-			$defaut = $element->defaut;
-			$action = (string) $defaut["action"];
-			$method = (string) $defaut["method"];
-		
-			$defaultRoute = new Route($id,$action,$method); // we create the default route the HUD Element should load
-		
+			$defaultRoute = new Router\Route($id,$action,$method,$params); // we create the default route the HUD Element should load
+	
 			$hud_element = new HudElement($this,$id);
 			$hud_element->setRoute($defaultRoute);
 		
@@ -66,8 +63,10 @@ class Hud extends Library implements \GameManager\Core\IDisplayObject {
 	* Set the routes to the matching hud's elements
 	* @param array $routes
 	*/
-	public function setRoutesToElements(array $routes) {
+	public function setRoutesToElements(\GameManager\Core\Component\Request $request) {
 
+		$routes = $request->getAllRoutes();
+		
 		// we only consider routes that can match to a Hud's element
 		$routes = array_intersect_key($routes,$this->getAllElements());
 	
@@ -85,11 +84,9 @@ class Hud extends Library implements \GameManager\Core\IDisplayObject {
 	* @return HudElement
 	*/
 	function addElement($index,HudElement $value) {
-		if(!is_string($index))
-			throw new WrongDataTypeEx("index",gettype($index),"string");
 					
 		if(array_key_exists($index,$this->_elements))
-			throw new GameManagerEx("HUD::The HUD Element ID must be UNIQUE");
+			throw new \GameManager\Core\Exception\GameManagerEx("HUD::The HUD Element ID must be UNIQUE");
 			
 		$this->_elements[$index] = $value;
 	}

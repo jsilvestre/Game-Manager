@@ -88,15 +88,18 @@ class TestRequest extends \PHPUnit_Framework_TestCase {
 	public function testGetAllInformation() {
 		$this->request->setInformation(Comp\Request::REQUEST_TYPE,'something');
 		$this->request->setInformation(Comp\Request::USER_IP,'somethingelse');
+		$this->request->setInformation(Comp\Request::REQUEST_MODULE,'randommodule');
 		
 		$this->assertEquals($this->request->getAllInformation(),array(Comp\Request::REQUEST_TYPE	=>'something',
-																	  Comp\Request::USER_IP		=>'somethingelse'));
+																	  Comp\Request::USER_IP		=>'somethingelse',
+																	  Comp\Request::REQUEST_MODULE => 'randommodule'));
 	}
 	
 	// covers set all information
 	public function testSetAllInformation() {
 		$info = array(Comp\Request::REQUEST_TYPE	=>'something',
-					  Comp\Request::USER_IP		=>'somethingelse');
+					  Comp\Request::USER_IP		=>'somethingelse',
+					  Comp\Request::REQUEST_MODULE => 'randommodule');
 					  
 		$this->request->setAllInformation($info);
 		

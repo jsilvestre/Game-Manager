@@ -13,6 +13,9 @@
 
 namespace GameManager\Core\Library\Hud;
 
+use GameManager\Core\Library\Router\Route;
+use \GameManager\Core\Library\Hud;
+
 class HudElement implements \GameManager\Core\IDisplayObject {
 	
 	/**
@@ -20,7 +23,7 @@ class HudElement implements \GameManager\Core\IDisplayObject {
 	* @var Route
 	* @access private
 	*/
-	private $_route;
+	private $_route = null;
 
 	/**
 	* The bound hud
@@ -52,7 +55,7 @@ class HudElement implements \GameManager\Core\IDisplayObject {
 	*/
 	function init($id) {
 		$this->setId($id);
-		$this->setRoute(null);
+		$this->setRoute(new Route(null, null, null)); // a unvalid route will set the parameter at null
 		$this->setIsRouted(false);
 	}
 	
@@ -89,11 +92,15 @@ class HudElement implements \GameManager\Core\IDisplayObject {
 	}
 
 	/**
-	* Set the HudElement route. The $route parameter can be NULL (if the HudElement has no Route)
+	* Set the HudElement route. If the route is not valid, we set the attribute to null. Damn you PHP fake type hint.
 	* @param Route $route
 	*/
-	function setRoute(Route $route) {			
-		$this->_route = $route;
+	function setRoute(Route $route) {
+
+		if(!$route->isValid())
+			$this->_route = null;
+		else		
+			$this->_route = $route;
 	}
 	
 	/**

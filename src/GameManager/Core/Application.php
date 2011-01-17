@@ -69,13 +69,13 @@ class Application {
 	 * The path of the config files (.php and .xml). 'P' is for Path.
 	 * @staticvar
 	 */
-	const P_CONFIG	= "game/ressources/";	
+	const P_CONFIG	= "game/configuration/";	
 	
 	/**
-	 * The name of the config files (.php and .xml). 'N' is for Name.
+	 * The name of the config file of the application (.php and .xml). 'FN' is for Name.
 	 * @staticvar
 	 */
-	const N_CONFIG	= "config";
+	const N_CONFIG_APP	= "application";
 	
 	/**
 	 * Builds the application object
@@ -104,8 +104,6 @@ class Application {
 	 */
 	function init() {		
 		$this->load(Loader::T_LIBRARY,array('Router','Hud','Session','Security'));
-		
-		$this->setConfiguration(self::P_CONFIG);
 	}
 	
 	/**
@@ -169,17 +167,19 @@ class Application {
 	}
 	
 	/**
-	 * Set the configuration array. If the config.php file does not exist, we dump the config.xml file
-	 * @param string $path the path of the config.php file
+	 * Set the configuration array of the application. If the N_CONFIG_APP.php file does not exist, we dump the N_CONFIG_APP.xml file
+	 * @param string $path the path of the N_CONFIG_APP.EXT file
 	 */
-	public function setConfiguration($path) {
+	public function loadApplicationConfiguration($path) {
 		
-		$target = $path.'/'.self::N_CONFIG; 
+		$module = 'module1';
+		
+		$target = $path.'/'.self::N_CONFIG_APP; 
 		
 		if(file_exists($target.'.php')) {
 			include($target.'.php');
 			
-			$this->configuration = $config;
+			$this->getContainer(Loader::T_CONFIG)->offsetSet(self::N_CONFIG_APP,$application[$module]);
 		}
 		else {
 			// create the dumper
@@ -187,26 +187,6 @@ class Application {
 			// call this function recursively in order to set the configuration array
 		}
 	}
-	
-	/**
-	 * Get the configuration array or one of the array of configuration
-	 * @param string $confType set only if you want to get a precise array. If you want to get all the arrays, let empty.
-	 * @throws OutOfBoundsException if you try to get a precise array that doesn't exist in the config array.
-	 */
-	public function getConfiguration($confType=null) {
-
-		if(is_null($confType)) {
-			return $this->configuration;
-		}
-		else {
-			if(array_key_exists($confType, $this->configuration)) {
-				return $this->configuration[$confType];
-			}
-			else {
-				throw new OutOfBoundsException("Index ".$confType." not in array configuration");
-			}
-		}
-	} 
 	
 	/**
 	 * Call all the uninit method of the library

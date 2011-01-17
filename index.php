@@ -3,6 +3,7 @@
 include "bootstrap.php";
 
 use \GameManager\Core\Component as Comp;
+use GameManager\Core\Application;
 
 function exception_error_handler($errno, $errstr, $errfile, $errline ) {
  throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
@@ -24,6 +25,10 @@ try {
 	
 	$gm->getContainer(Comp\Loader::T_LIBRARY)->offsetGet('router')->setSourceArray($_GET);
 	$gm->getContainer(Comp\Loader::T_LIBRARY)->offsetGet('router')->processRouting($request);
+	
+	$gm->loadApplicationConfiguration(Application::P_CONFIG);
+	
+	$gm->getContainer(Comp\Loader::T_LIBRARY)->offsetGet('hud')->create();
 	
 	
 	$gm->uninit();

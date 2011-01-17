@@ -37,7 +37,7 @@ class Request {
 	/**
 	 * Index for the User IP information
 	 */
-	const USER_IP	= "user_ip";	
+	const USER_IP	= "user_ip";
 	
 	/**
 	 * Index for the request type "complete loading" or "part loading"
@@ -46,6 +46,11 @@ class Request {
 	 * @see Router::isCompleteLoading()
 	 */
 	const REQUEST_TYPE	= "type_of_request";
+	
+	/**
+	 * Module of the request
+	 */
+	const REQUEST_MODULE	= "module_of_request";
 	
 	/**
 	 * Constructor
@@ -61,8 +66,9 @@ class Request {
 	private function _init() {
 		$this->routes = array();
 		$this->information = array(
-								self::USER_IP		=> null,
-								self::REQUEST_TYPE	=> Router::T_COMPLETE_LOADING	
+								self::USER_IP			=> null,
+								self::REQUEST_TYPE		=> Router::T_COMPLETE_LOADING,
+								self::REQUEST_MODULE	=> null
 							);
 	}
 	

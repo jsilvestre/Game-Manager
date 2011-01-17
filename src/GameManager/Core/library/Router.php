@@ -36,6 +36,11 @@ class Router extends Library {
 	 * The string for the requestType parameter in the URL. "U" is for "URL".
 	 */
 	const U_REQUEST_TYPE		= "requestType";
+	
+	/**
+	 * The string for the module parameter in the URL. "U" is for "URL".
+	 */
+	const U_REQUEST_MODULE		= "module";
 
 	/**
 	 * The array containing the options for the URL. It will basically be the GET global.
@@ -61,10 +66,11 @@ class Router extends Library {
 	public function processRouting(Request $request) {
 		
 		$request->setInformation(Request::REQUEST_TYPE, $this->getRequestTypeFromUrl());
+		$request->setInformation(Request::REQUEST_MODULE, $this->getRequestModuleFromUrl());
 						
 		foreach($this->sourceArray as $id => $target) {
 			
-			// do not secure the parameters themselves, only check the action-method-param1:param2 pattern
+			// do not secure the parameters themselves, only check the action-method-param1:param2:... pattern
 			$pattern = "#^[a-z/]+((-[a-z]+)?|(-[a-z]+){1}(-(:?([a-z0-9])+)+)?)$#";
 			
 			if(preg_match($pattern,$target)) {
@@ -89,7 +95,7 @@ class Router extends Library {
 				$request->addRoute(new Router\Route($id,$action,$method,$params));
 			}
 			else {
-				throw new InvalidRouteEx($id,$target);
+				throw new \GameManager\Core\Exception\InvalidRouteEx($id,$target);
 			}
 		}
 		//var_dump($request);
@@ -159,6 +165,7 @@ class Router extends Library {
 	/**
 	* Retrieve the request type from url and returns it. Then it will destroy the index in the source array.
 	* @access private
+	* @return string
 	*/	
 	private function getRequestTypeFromUrl() {
 		
@@ -173,6 +180,23 @@ class Router extends Library {
 		else {			
 			return self::T_COMPLETE_LOADING;	
 		}
+	}
+	
+	/**
+	 * Retrieve the request module form url and returns it. Then it will destroy the index in the source array.
+	 * @access private
+	 * @return string
+	 */
+	private function getRequestModuleFromUrl() {
+		
+		$requestModule = null;
+		
+		if(isset($this->sourceArray[self::U_REQUEST_MODULE])) {
+			$requestModule = $this->sourceArray[self::U_REQUEST_MODULE];
+			unset($this->sourceArray[self::U_REQUEST_MODULE]);
+		}
+		
+		return $requestModule;				
 	}
 	
 	/**
