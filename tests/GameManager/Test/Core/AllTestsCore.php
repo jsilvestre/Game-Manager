@@ -16,6 +16,7 @@ class AllTestsCore
         $suite->addTestSuite('GameManager\Test\Core\Library\TestRouter');
         $suite->addTestSuite('GameManager\Test\Core\Library\TestRoute');
         $suite->addTestSuite('GameManager\Test\Core\Component\TestRequest');
+        $suite->addTestSuite('GameManager\Test\Core\Component\TestCollection');
         
         return $suite;
     }

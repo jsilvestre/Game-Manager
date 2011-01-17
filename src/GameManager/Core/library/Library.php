@@ -42,6 +42,11 @@ abstract class Library {
 	protected function init() {}
 	
 	/**
+	 * This is the opposit of the init method : it will be called at the end of the program.
+	 */
+	public function uninit() {}
+	
+	/**
 	 * Get the event dispatcher instance
 	 * @return sfEventDispatcher
 	 * @access protected

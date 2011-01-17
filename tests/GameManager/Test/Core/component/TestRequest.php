@@ -24,11 +24,10 @@ class TestRequest extends \PHPUnit_Framework_TestCase {
 	}
 	
 	/**
-	 * @expectedException ErrorException
+	 * @expectedException Exception
 	 */
 	public function testAddRouteErrorCase() {
-		//$this->request->addRoute("anything but no Route object");
-		throw new \ErrorException();
+		$this->request->addRoute("anything but no Route object");
 	}
 	
 	public function testGetRoute() {

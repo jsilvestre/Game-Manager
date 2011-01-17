@@ -92,8 +92,8 @@ class Application {
 		$this->loader->setApplication($this);
 		
 		// we create a container that will contains other containers
-		$this->container = new Collection("Collection");
-		$this->container->offsetSet(Loader::T_LIBRARY,new Collection("Library"));
+		$this->container = new Collection("GameManager\Core\Component\Collection");
+		$this->container->offsetSet(Loader::T_LIBRARY,new Collection("GameManager\Core\Library\Library"));
 		$this->container->offsetSet(Loader::T_CONFIG,new Collection("array"));
 		$this->container->offsetSet(Loader::T_ACTION,new Collection("Action"));
 		// now we can easily add new containers for models, managers, ...
@@ -207,6 +207,15 @@ class Application {
 			}
 		}
 	} 
+	
+	/**
+	 * Call all the uninit method of the library
+	 */
+	public function uninit() {
+		foreach($this->getContainer(Loader::T_LIBRARY) as $lib) {
+			$lib->uninit();
+		}
+	}
 	
 	/**
 	 * Returns the absolute path of the application

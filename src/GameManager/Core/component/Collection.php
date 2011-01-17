@@ -40,12 +40,13 @@ class Collection extends \ArrayObject {
 	 * @throws RuntimeException if the collection type is not correct
 	 * @return bool true if the test pass, false if it fail
 	 */
-	private function isTypeValid($value) {
+	public function isTypeValid($value) {
 		
 		$colType = $this->getType();
-		
-		if(class_exists(get_class($value))) {
-			$pass = gettype($value) == $colType;
+
+		if(is_object($value) && class_exists(get_class($value)) && class_exists($colType)) {
+					
+			$pass = get_class($value) == $colType || is_subclass_of($value, $colType);
 		}
 		else if($colType=="array")
 			$pass = is_array($value);
@@ -70,27 +71,43 @@ class Collection extends \ArrayObject {
 	/**
 	 * Redefines the offsetSet method of the ArrayObject class
 	 * @see ArrayObject::offsetSet()
-	 * @throws UnexpectedValueException if the type check fail
+	 * @throws InvalidArgumentException if the type check fail
 	 */
 	public function offsetSet($index, $newval) {
 		
-		if($this->isTypeValid($newval))
-			throw new \UnexpectedValueException('The $value type must be '.$this->getType().'. It is '.gettype($newval).'.');
-		
-		parent::offsetSet($index, $newval);
+		if($this->isTypeValid($newval)) {				
+			parent::offsetSet($index, $newval);
+		}
+		else {
+			if(is_object($newval)) {
+				$type = get_class($newval);
+			}
+			else {
+				$type = gettype($newval);
+			}
+			throw new \InvalidArgumentException('The $value type must be '.$this->getType().'. It is '.$type.'.');
+		}
 	}
 	
 	/**
 	 * Redefines the append method of the ArrayObject class
 	 * @see ArrayObject::append()
-	 * @throws UnexpectedValueException if the type check fail
+	 * @throws InvalidArgumentException if the type check fail
 	 */
 	public function append($value) {
 		
-		if($this->isTypeValid($value))
-			throw new \UnexpectedValueException('The $value type must be '.$this->getType().'. It is '.gettype($value).'.');
-		
-		parent::append($value);
+		if($this->isTypeValid($newval)) {				
+			parent::append($index, $newval);
+		}
+		else {
+			if(is_object($newval)) {
+				$type = get_class($newval);
+			}
+			else {
+				$type = gettype($newval);
+			}
+			throw new \InvalidArgumentException('The $value type must be '.$this->getType().'. It is '.$type.'.');
+		}
 	}
 	
 }

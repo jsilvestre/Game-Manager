@@ -2,7 +2,7 @@
 /**
  * Represents a Response which will be displayed
  * 
- * A Response object is a HTTP response rendered and ready to be displayed state of the application.
+ * A Response object is a HTTP response rendered and ready to be displayed. It is the final state of the application.
  *
  * @package     GameManager
  * @subpackage  Response
@@ -10,7 +10,6 @@
  * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
  * @link        http://game-manager.jsilvestre.fr
  * @since       1.0
- * @todo Define a subpackage for this class.
  */
 
 namespace GameManager\Core\Component;

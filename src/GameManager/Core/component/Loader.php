@@ -3,6 +3,7 @@
  * Loader class
  * 
  * Execute all the loading the application needs. It doesn't include the files : the symfony universal autoloader does it well.
+ * This class works as a Factory.
  *
  * @package     GameManager
  * @subpackage  Loader
