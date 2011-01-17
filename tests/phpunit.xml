@@ -1,0 +1,15 @@
+<phpunit bootstrap="../bootstrap.php"
+         colors="true"
+         convertErrorsToExceptions="true"
+         convertNoticesToExceptions="true"
+         convertWarningsToExceptions="true"
+         verbose="true"
+         strict="true">
+         
+<testsuites>
+  <testsuite name="Framework test suite">
+    <file>./GameManager/Test/AllTests.php</file>
+  </testsuite>
+</testsuites>
+
+</phpunit>
