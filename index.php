@@ -1,30 +1,28 @@
 <?php
-include('lib/core/Library.php');
-include('lib/core/Loader.php');
-include('lib/core/Collection.php');
-include('lib/external/vendor/sfFinder.php');
 
-spl_autoload_register(array('Loader','autoloadException'));
-spl_autoload_register(array('Loader','autoloadExternal'));
-spl_autoload_register(array('Loader','autoloadLibrary'));
+include "bootstrap.php";
+
+use \GameManager\Core\Component as Comp;
 
 function exception_error_handler($errno, $errstr, $errfile, $errline ) {
  throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
 }
 set_error_handler("exception_error_handler");
 
-
 try {
-
+	
 	$dispatcher = new sfEventDispatcher();
+	$request = new Comp\Request();
+	$response = new Comp\Response();
+	$loader = new Comp\Loader();
 
-	$gm = new GameManager($dispatcher);
+	$gm = new \GameManager\Core\Application($dispatcher,$request,$response,$loader);
 	
 	$gm->init();
 	
-	$gm->load('library','Router');
-	
-	
+	$gm->getContainer(Comp\Loader::T_LIBRARY)->offsetGet('router')->setSourceArray($_GET);
+	$gm->getContainer(Comp\Loader::T_LIBRARY)->offsetGet('router')->processRouting($request);
+
 }
 catch(Exception $e) {
 	echo $e.'<br /><br />';
