@@ -9,6 +9,8 @@ function exception_error_handler($errno, $errstr, $errfile, $errline ) {
 }
 set_error_handler("exception_error_handler");
 
+session_start();
+
 try {
 	
 	$dispatcher = new sfEventDispatcher();
@@ -22,7 +24,9 @@ try {
 	
 	$gm->getContainer(Comp\Loader::T_LIBRARY)->offsetGet('router')->setSourceArray($_GET);
 	$gm->getContainer(Comp\Loader::T_LIBRARY)->offsetGet('router')->processRouting($request);
-
+	
+	
+	$gm->uninit();
 }
 catch(Exception $e) {
 	echo $e.'<br /><br />';
@@ -31,3 +35,5 @@ catch(Exception $e) {
 catch(ErrorException $e) {
 	echo $e->getMessage();
 }
+
+session_write_close();
