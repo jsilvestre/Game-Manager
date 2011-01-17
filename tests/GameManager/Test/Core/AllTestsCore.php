@@ -13,6 +13,7 @@ class AllTestsCore
     {
         $suite = new \PHPUnit_Framework_TestSuite('core');
         
+        $suite->addTestSuite('GameManager\Test\Core\Library\TestSession');
         $suite->addTestSuite('GameManager\Test\Core\Library\TestRouter');
         $suite->addTestSuite('GameManager\Test\Core\Library\TestRoute');
         $suite->addTestSuite('GameManager\Test\Core\Component\TestRequest');

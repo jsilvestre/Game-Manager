@@ -57,7 +57,7 @@ abstract class SessionStorage extends \GameManager\Core\Library\Library {
 	/**
 	 * Manage the flash data. This must be called only once.
 	 */
-	function manageFlashdata() {
+	public function manageFlashdata() {
 		$this->delete_old_flashdata();		
 		$this->mark_flashdata_as_old();
 	}
@@ -65,17 +65,17 @@ abstract class SessionStorage extends \GameManager\Core\Library\Library {
 	/**
 	 * Create a session data
 	 * 
-	 * @param $id
-	 * @param $data
+	 * @param string $id
+	 * @param mixed $data
 	 */
 	function setData($id,$data) {
 		$this->session[$id] = $data;
 	}
 	
 	/**
-	 * Get back a session data. Returns false if the id doesn't exist.
-	 *
-	 * @param $id
+	 * Get back a session data.
+	 * @param string $id
+	 * @return mixed false if the ID doesn't exist, the value neither
 	 */
 	function getData($id) {
 		if(!array_key_exists($id,$this->session))
@@ -85,23 +85,22 @@ abstract class SessionStorage extends \GameManager\Core\Library\Library {
 	}
 	
 	/**
-	 * Create a flash data
+	 * Create a flash data.
 	 * 
-	 * @param $id
-	 * @param $data
+	 * @param string $id
+	 * @param mixed $data
 	 */
 	function setFlashdata($id,$data) {
-		$index = 'flash:new:'.$id;
+		$id = 'flash:new:'.$id;
 		$this->setData($id,$data);
 	}
 	
 	/**
-	 * Get back a flash data. Throw a NonExistentDataEx if the id doesn't exist.
-	 * 
-	 * @param $id
+	 * Get back a flash data.
+	 * @param string $id
 	 */
 	function getFlashdata($id) {
-		$index = 'flash:old:'.$id;
+		$id = 'flash:old:'.$id;
 		return $this->getData($id);	
 	}
 	
@@ -133,7 +132,7 @@ abstract class SessionStorage extends \GameManager\Core\Library\Library {
 		$value = $this->getData($old_flashdata_key);
 
 		$new_flashdata_key = 'flash:new:'.$id;
-		$this->setSata($new_flashdata_key, $value);
+		$this->setData($new_flashdata_key, $value);
 	}
 	
 	/**
@@ -146,7 +145,7 @@ abstract class SessionStorage extends \GameManager\Core\Library\Library {
 		{
 			if (strpos($key, ':old:'))
 			{
-				$this->unset_data($key);
+				$this->unsetData($key);
 			}
 		}
 	}
@@ -159,7 +158,7 @@ abstract class SessionStorage extends \GameManager\Core\Library\Library {
 	function unsetData($id)	{
 		
 		if(!array_key_exists($id,$this->session))
-			throw NonExistentDataEx(NonExistentData::SESSION,$id);
+			throw new \OutOfBoundsException("Index ".$id." not in array session.");
 			
 		unset($this->session[$id]);
 	}
