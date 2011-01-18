@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<application>
+	<module name="game or admin or something : must match the folder name" default="true">
+		<information>
+			<meta>
+				<tag type="title" value="Le titre" />
+				<tag type="charset" value="utf-8" />
+				<tag type="author" value="Spoutnik" />
+			</meta>
+			<misc>
+				<tag type="version" value="0.0.0" />
+			</misc>
+		</information>
+	
+		<css src="game/ressources/styles/">
+			<file name="main.css" />
+			<file name="menu.css" />
+		</css>
+	
+		<javascript src="game/ressources/styles/">
+			<file name="jquery-1.4.2.min.js" />
+		</javascript>
+	
+		<interface>
+			<element id="detection">
+				<target action="sample" method="index" />
+			</element>		
+			<element id="infos_perso">
+				<target action="sample" method="index" />
+			</element>	
+			<element id="principal">
+				<target action="sample" method="test" />
+			</element>	
+			<element id="menu">
+				<target action="sample" method="test" />
+			</element>	
+			<element id="deplacement">
+				<target action="sample" method="index" />
+			</element>	
+			<element id="meteo">
+				<target action="sample" method="test" />
+			</element>
+		</interface>
+	</module>
+</application>
