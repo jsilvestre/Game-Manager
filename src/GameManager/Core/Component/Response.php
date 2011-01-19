@@ -10,11 +10,14 @@
  * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
  * @link        http://game-manager.jsilvestre.fr
  * @since       1.0
+ * @todo refactoring of the class in order to manage exception in a good and proper way.Ò
  */
 
 namespace GameManager\Core\Component;
 
-class Response {
+use GameManager\Core\IDisplayObject;
+
+class Response implements IDisplayObject {
 	
 	/**
 	 * Collection of HTTP headers
@@ -161,6 +164,27 @@ class Response {
 	 */
 	function getStatus() {
 		return $this->_statusCode;
+	}
+	
+	/**
+	 * @inheritdoc
+	 */
+	function render() {
+		
+		foreach($this->getAllHeaders() as $header) {
+			header($header);
+		}
+		
+		ob_start();
+		foreach($this->getAllContents() as $content) {
+			echo $content;
+		}
+		
+		$render = ob_get_contents();
+		
+		ob_end_clean();
+		
+		return $render;
 	}
 	
 }

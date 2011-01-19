@@ -41,11 +41,9 @@ try {
 	
 	$gm->getContainer(Comp\Loader::T_LIBRARY)->offsetGet('hud')->render();
 	
-	foreach($gm->getResponse()->getAllContents() as $content) {
-		echo $content;
-	}
-	
 	$gm->uninit();
+	
+	echo $gm->getResponse()->render();
 }
 catch(Exception $e) {
 	echo get_class($e).': '.$e->getMessage().'<br />'.$e->getLine().'<br />'.$e->getFile().'<br />'.str_replace('#','<br />',$e->getTraceAsString());

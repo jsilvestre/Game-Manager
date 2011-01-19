@@ -148,6 +148,7 @@ class HudElement implements \GameManager\Core\IDisplayObject {
 	/**
 	* Generate a render for the HudElement
 	* @return string
+	* @todo think about a refactoring of this method: the method call should be elsewhere?
 	*/
 	function render() {
 	

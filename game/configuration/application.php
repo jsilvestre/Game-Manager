@@ -61,12 +61,12 @@ $information = array(
 			);
 			
 $css = array(
-		'src' => 'game/ressources/styles/',
+		'src' => 'game/ressource/style/',
 		'files' => array('main.css','menu.css')
 	);
 		
 $javascript = array(
-				'src' => 'game/ressources/javascript/',
+				'src' => 'game/ressource/script/',
 				'files' => array('jquery-1.4.2.min.js')
 			);
 		
