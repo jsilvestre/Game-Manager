@@ -1,10 +1,10 @@
 <?php
 
 /**
- * Abstract class for libraries
+ * Abstract class for actions
  *
  * @package     GameManager
- * @subpackage  Library
+ * @subpackage  Component
  * @author      Joseph Silvestre <contact@jsilvestre.fr>
  * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
  * @link        http://game-manager.jsilvestre.fr
@@ -12,9 +12,9 @@
  * @abstract
  */
 
-namespace GameManager\Core\Library;
+namespace GameManager\Core\Component;
 
 use \GameManager\Core\Application;
 use GameManager\Core\ApplicationElement;
 
-abstract class Library extends ApplicationElement {}
+abstract class Action extends ApplicationElement {}

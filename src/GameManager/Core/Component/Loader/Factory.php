@@ -1,8 +1,7 @@
 <?php
-
 /**
- * View Factory.
- * Load the views.
+ * Factory class.
+ * Abstracts item factories.
  *
  * @package     GameManager
  * @subpackage  Loader
@@ -12,14 +11,12 @@
  * @since       1.0
  */
 
-namespace GameManager\Core\Component\Loader;
-
-use GameManager\Core\Application;
-use GameManager\Core\Component\Loader;
-
-class ConfigFactory extends Factory {
+abstract class Factory {
 	
-	public function process($name) {
-		
-	}
+	/**
+	 * Process the factorying.
+	 * @param string $name the item name.
+	 * @return array like this: array('index'=>$index,'value'=>$value) 
+	 */
+	abstract public function process($name);
 }

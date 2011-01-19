@@ -16,11 +16,10 @@
 
 namespace GameManager\Core\Component;
 
-use GameManager\Core\Component\Loader\ConfigFactory;
-
-use GameManager\Core\Component\Loader\ObjectFactory;
-
 use \GameManager\Core\Application;
+use GameManager\Core\Component\Loader\ConfigFactory;
+use GameManager\Core\Component\Loader\ObjectFactory;
+use GameManager\Core\Component\Request;
 
 class Loader {
 	
@@ -76,7 +75,6 @@ class Loader {
 			
 			switch($type) {				
 				case self::T_CONFIG :
-					//$loadedObject = $this->loadConfig($type,$name);
 					$factory = new ConfigFactory($this->getApplication());
 					$loadedObject = $factory->process($name,'game/configuration/');
 					break;
@@ -85,6 +83,9 @@ class Loader {
 					$loadedObject = $factory->process($name,'GameManager\Core\Library\\');
 					break;
 				case self::T_ACTION:
+					$factory = new ObjectFactory($this->getApplication());
+					$module = $this->getApplication()->getRequest()->getInformation(Request::REQUEST_MODULE);
+					$loadedObject = $factory->process($name,'Module\\'.$module.'\Action\\');
 					break;
 				case self::T_VIEW:
 					echo "load view";
@@ -98,36 +99,6 @@ class Loader {
 		}
 	}
 	
-	private function loadClass($type,$name,$ns) {
-		
-		$indexName = strtolower($name);	
-		
-		$refl = new \ReflectionClass($ns.$name); // the include is made by autoloading
-		
-		$instance = $refl->newInstance($this->getApplication());
-		
-		$this->getApplication()->getContainer($type)->offsetSet($indexName,$instance);		
-	}
-	
-	private function loadConfig($type,$name) {
-		
-		$folder = \Core\GameManager::getPath()."game/config/";
-		
-		$path = $folder.$name.'.php';
-
-		Loader::checkFileValidity($name,$folder);
-		
-		require($path);
-		
-		if(!isset(${$name}))
-			throw new \ConfigVarNotFoundEx($name);
-			
-		if(!is_array(${$name}))
-			throw new \WrongDataTypeEx($name,gettype(${$name}),"Array");
-					
-		$this->getApplication()->getContainer($type)->offsetSet($name, ${$name});
-	}
-
 	/**
 	 * Gets the application object instance
 	 * @return GameManager
@@ -146,15 +117,5 @@ class Loader {
 	 */
 	public function setApplication(Application $application) {
 		$this->application = $application;
-	}
-	
-	
-	/**
-	 * Returns the absolute path of the application
-	 * @return string
-	 * @static
-	 */
-	public static function getPath() {
-		return realpath(dirname(__FILE__) . '/../..').'/';
 	}	
 }

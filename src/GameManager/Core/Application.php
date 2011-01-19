@@ -19,7 +19,6 @@ use \GameManager\Core\Component\Response;
 use \GameManager\Core\Component\Loader;
 use \GameManager\Core\Component\Collection;
 
-
 class Application {
 	
 	/**

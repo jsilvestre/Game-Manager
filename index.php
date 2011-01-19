@@ -20,6 +20,8 @@ try {
 	$dispatcher = new sfEventDispatcher();
 	$request = new Comp\Request($default_module);
 	$response = new Comp\Response();
+	
+	
 	$loader = new Comp\Loader();
 
 	$gm = new \GameManager\Core\Application($dispatcher,$request,$response,$loader);
