@@ -76,4 +76,20 @@ abstract class Library {
 	protected function getContainer($containerName) {
 		return $this->_application->getContainer($containerName);
 	}
+	
+	/**
+	 * Gets the request object
+	 * @return Request
+	 */
+	protected function getRequest() {
+		return $this->_application->getRequest();
+	}
+	
+	/**
+	 * Gets the response object
+	 * @return Response
+	 */
+	protected function getResponse() {
+		return $this->_application->getResponse();
+	}
 }

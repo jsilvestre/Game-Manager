@@ -55,20 +55,20 @@ class Request {
 	/**
 	 * Constructor
 	 */
-	function __construct() {
-		$this->_init();
+	function __construct($module=null) {
+		$this->_init($module);
 	}
 	
 	/**
 	 * Initialize the object
 	 * @access private
 	 */
-	private function _init() {
+	private function _init($module) {
 		$this->routes = array();
 		$this->information = array(
 								self::USER_IP			=> null,
 								self::REQUEST_TYPE		=> Router::T_COMPLETE_LOADING,
-								self::REQUEST_MODULE	=> null
+								self::REQUEST_MODULE	=> $module
 							);
 	}
 	

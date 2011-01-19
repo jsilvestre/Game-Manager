@@ -34,6 +34,7 @@ $interface = array(
 			);
 				
 $module1 = array(
+				'id'			=> 'module1',
 				'information'	=> $information,
 				'css' 			=> $css,
 				'js'			=> $javascript,
@@ -79,6 +80,7 @@ $interface = array(
 			);
 				
 $module2 = array(
+				'id'			=> 'module2',
 				'information'	=> $information,
 				'css' 			=> $css,
 				'js'			=> $javascript,

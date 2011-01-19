@@ -69,7 +69,7 @@ class Application {
 	 * The path of the config files (.php and .xml). 'P' is for Path.
 	 * @staticvar
 	 */
-	const P_CONFIG	= "game/configuration/";	
+	const P_CONFIG	= "game/configuration";	
 	
 	/**
 	 * The name of the config file of the application (.php and .xml). 'FN' is for Name.
@@ -126,7 +126,7 @@ class Application {
 	 * @uses Loader::T_CONFIG
 	 * @uses Loader::T_ACTION
 	 */
-	function getContainer($containerName=null) {
+	public function getContainer($containerName=null) {
 		
 		if(!is_null($containerName) && $this->container->offsetExists($containerName))
 			return $this->container->offsetGet($containerName);
@@ -138,7 +138,7 @@ class Application {
 	 * Gets the request object
 	 * @return Request
 	 */
-	function getRequest() {
+	public function getRequest() {
 		return $this->request;
 	}
 
@@ -172,14 +172,31 @@ class Application {
 	 */
 	public function loadApplicationConfiguration($path) {
 		
-		$module = 'module1';
-		
-		$target = $path.'/'.self::N_CONFIG_APP; 
+		$moduleName = $this->getRequest()->getInformation(Request::REQUEST_MODULE);
+
+		$target = $path.'/'.self::N_CONFIG_APP;
 		
 		if(file_exists($target.'.php')) {
 			include($target.'.php');
+
+			if(is_null($moduleName)) { // it has not been setted manually or by the URL
+				foreach($application as $module) {					
+					if(array_key_exists('default',$module) && $module['default'] == true) {
+						break;
+					}
+				}
+				
+				if(!array_key_exists('default', $module))
+					throw new \RuntimeException('No default module set. Please set manually, via URL or in the config file a default module.');
+			}
+			else {
+				if(!array_key_exists($moduleName, $application))
+					throw new \RuntimeException('The module set is not specified in the configuration.');
+				
+				$module = $application[$moduleName];
+			}
 			
-			$this->getContainer(Loader::T_CONFIG)->offsetSet(self::N_CONFIG_APP,$application[$module]);
+			$this->getContainer(Loader::T_CONFIG)->offsetSet(self::N_CONFIG_APP,$application[$module['id']]);
 		}
 		else {
 			// create the dumper

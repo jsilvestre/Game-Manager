@@ -54,19 +54,34 @@ class Router extends Library {
 	 */
 	protected function init() {
 		$this->setSourceArray(array());
-	} 
+	}
+	
+	/**
+	 * Retrieve and set the information of the request.
+	 */
+	public function processInformation() {
+		
+		// we must call these functions to remove the parameters in the URL
+		$type = $this->_getRequestTypeFromUrl();
+		$module = $this->_getRequestModuleFromUrl();
+		
+		$this->getRequest()->setInformation(Request::REQUEST_TYPE, $type);
+		
+		if(array_key_exists('REMOTE_ADDR', $_SERVER)) // to make the tests work properly : there is no REMOTE_ADDR index during the tests and it throws an error
+			$this->getRequest()->setInformation(Request::USER_IP, $_SERVER["REMOTE_ADDR"]);
+		
+		// if the default module has been set manually, we don't use the URL parameter
+		if($this->getRequest()->getInformation(Request::REQUEST_MODULE) == null)
+			$this->getRequest()->setInformation(Request::REQUEST_MODULE, $module);
+	}
 	
 	/**
 	* Creates the routes.
 	* Creates the routes from the URL and add them to the Request object
-	* @param Request the request object of the application
 	* @dispatches router.after_routing sfEvent at the end of the method
 	* @throws InvalidRouteEx if the url is not valid.
 	*/
-	public function processRouting(Request $request) {
-		
-		$request->setInformation(Request::REQUEST_TYPE, $this->getRequestTypeFromUrl());
-		$request->setInformation(Request::REQUEST_MODULE, $this->getRequestModuleFromUrl());
+	public function processRouting() {
 						
 		foreach($this->sourceArray as $id => $target) {
 			
@@ -92,15 +107,16 @@ class Router extends Library {
 				else
 					$params = null;
 
-				$request->addRoute(new Router\Route($id,$action,$method,$params));
+				$this->getRequest()->addRoute(new Router\Route($id,$action,$method,$params));
+
 			}
 			else {
 				throw new \GameManager\Core\Exception\InvalidRouteEx($id,$target);
 			}
 		}
-		//var_dump($request);
+
 		// we notify that routing is done and we pass the Request object to the listeners.
-		$this->getEventDispatcher()->notify(new \sfEvent($request, 'router.after_routing'));
+		$this->getEventDispatcher()->notify(new \sfEvent($this->getRequest(), 'router.after_routing'));
 	}
 	
 	/**
@@ -167,7 +183,7 @@ class Router extends Library {
 	* @access private
 	* @return string
 	*/	
-	private function getRequestTypeFromUrl() {
+	private function _getRequestTypeFromUrl() {
 		
 		if(isset($this->sourceArray[self::U_REQUEST_TYPE])) {
 			$requestType = $this->sourceArray[self::U_REQUEST_TYPE];
@@ -187,7 +203,7 @@ class Router extends Library {
 	 * @access private
 	 * @return string
 	 */
-	private function getRequestModuleFromUrl() {
+	private function _getRequestModuleFromUrl() {
 		
 		$requestModule = null;
 		

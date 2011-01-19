@@ -8,13 +8,12 @@ use \GameManager\Core\Library as Lib;
 class TestRouter extends \PHPUnit_Framework_TestCase {
 	
 	protected $router;
-	protected $request;
+	protected $application;
 	protected $sourceArray;
 	
 	public function setUp() {
-		$app = new \GameManager\Core\Application(new \sfEventDispatcher(), new Comp\Request(), new Comp\Response(),new Comp\Loader());
-		$this->router = new Lib\Router($app);
-		$this->request = new Comp\Request();
+		$this->application = new \GameManager\Core\Application(new \sfEventDispatcher(), new Comp\Request(), new Comp\Response(),new Comp\Loader());
+		$this->router = new Lib\Router($this->application);
 	}
 	
 	/**
@@ -22,10 +21,11 @@ class TestRouter extends \PHPUnit_Framework_TestCase {
 	 */
 	public function testProcessRouting($source,$size,$requestType) {
 		$this->router->setSourceArray($source);
-		$this->router->processRouting($this->request);
+		$this->router->processInformation();
+		$this->router->processRouting();
 		
-		$this->assertEquals($this->request->requestSize(),$size);
-		$this->assertEquals($this->request->getInformation(Comp\Request::REQUEST_TYPE),$requestType);
+		$this->assertEquals($this->application->getRequest()->requestSize(),$size);
+		$this->assertEquals($this->application->getRequest()->getInformation(Comp\Request::REQUEST_TYPE),$requestType);
 	}
 	
 	/**
@@ -34,7 +34,7 @@ class TestRouter extends \PHPUnit_Framework_TestCase {
 	 */
 	public function testProcessRoutingErrorCase($source) {
 		$this->router->setSourceArray($source);
-		$this->router->processRouting($this->request);		
+		$this->router->processRouting();		
 	}
 	
 	public function providerSourceArray() {

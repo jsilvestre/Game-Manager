@@ -14,8 +14,11 @@ session_start();
 
 try {
 	
+	$default_module = "module2";
+	$default_module = null;
+	
 	$dispatcher = new sfEventDispatcher();
-	$request = new Comp\Request();
+	$request = new Comp\Request($default_module);
 	$response = new Comp\Response();
 	$loader = new Comp\Loader();
 
@@ -23,13 +26,16 @@ try {
 	
 	$gm->init();
 	
-	$gm->getContainer(Comp\Loader::T_LIBRARY)->offsetGet('router')->setSourceArray($_GET);
-	$gm->getContainer(Comp\Loader::T_LIBRARY)->offsetGet('router')->processRouting($request);
+	$gm->getContainer(Comp\Loader::T_LIBRARY)->offsetGet('router')->setSourceArray($_GET);	
+	$gm->getContainer(Comp\Loader::T_LIBRARY)->offsetGet('router')->processInformation();
 	
-	$gm->loadApplicationConfiguration(Application::P_CONFIG);
+	$gm->loadApplicationConfiguration(__DIR__.'/'.Application::P_CONFIG);
+
+	$gm->getContainer(Comp\Loader::T_LIBRARY)->offsetGet('router')->processRouting();	
 	
 	$gm->getContainer(Comp\Loader::T_LIBRARY)->offsetGet('hud')->create();
 	
+	$gm->getContainer(Comp\Loader::T_LIBRARY)->offsetGet('hud')->setRoutesToElements();
 	
 	$gm->uninit();
 }
