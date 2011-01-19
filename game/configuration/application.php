@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Start {module_name} configuration
+ * Start Sample configuration
  */
 $information = array(
 				'meta'	=> array(
@@ -15,12 +15,12 @@ $information = array(
 			);
 			
 $css = array(
-		'src' => 'game/ressources/styles/',
+		'src' => 'game/ressource/style/',
 		'files' => array('main.css','menu.css')
 	);
 		
 $javascript = array(
-				'src' => 'game/ressources/javascript/',
+				'src' => 'game/ressource/script/',
 				'files' => array('jquery-1.4.2.min.js')
 			);
 		
@@ -33,8 +33,8 @@ $interface = array(
 				array('id' => 'meteo', 'target' => array('action' => 'sample', 'method' => 'index', 'params' => null))
 			);
 				
-$module1 = array(
-				'id'			=> 'module1',
+$sample = array(
+				'id'			=> 'sample',
 				'information'	=> $information,
 				'css' 			=> $css,
 				'js'			=> $javascript,
@@ -43,7 +43,7 @@ $module1 = array(
 			);
 			
 /*
- * End {module_name} configuration
+ * End Sample configuration
  */
 			
 /*
@@ -92,6 +92,6 @@ $module2 = array(
  */
 			
 $application = array(
-					'module1'	=> $module1,
+					'sample'	=> $sample,
 					'module2'	=> $module2
 				);

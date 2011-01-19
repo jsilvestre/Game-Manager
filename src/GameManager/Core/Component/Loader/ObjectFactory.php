@@ -34,23 +34,21 @@ class ObjectFactory {
 	
 	/**
 	 * @inheritdoc
-	 * @param string $namespace the namespace of the ApplicationElement class to be instanciated
 	 * @throws \Exception if the class that we want to instantiate is not an ApplicationElement class.
 	 */
-	public function process($name,$namespace) {
+	public function process($name,array $params=null) {
 		
-		$indexName = strtolower($name);	
+		$indexName = strtolower($name);
 		
-		$refl = new \ReflectionClass($namespace.$name); // the include is made by autoloading
+		$name = strtoupper($name[0]).substr($name,1);
+		
+		$refl = new \ReflectionClass($params['namespace'].$name); // the include is made by autoloading
 		
 		if(!$refl->isSubclassOf('\GameManager\Core\ApplicationElement'))
 			throw new \Exception("You can only load ApplicationElement with the ObjectFactory.");
 		
 		$instance = $refl->newInstance($this->application);
 		
-		return array(
-					'index'	=> $indexName,
-					'value'	=> $instance
-				);			
+		return $instance;
 	}	
 }

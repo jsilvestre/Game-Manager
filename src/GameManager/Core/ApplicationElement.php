@@ -58,11 +58,11 @@ abstract class ApplicationElement {
 	 * Load an element into the application. Alias the application load method.
 	 * @param string $type the element type
 	 * @param string $name
-	 * @access protected
+	 * @param array $params can be null
 	 * @uses Application::load()
 	 */
-	protected function load($type,$name) {
-		return $this->_application->load($type, $name);
+	public function load($type,$name,array $params=null) {
+		return $this->_application->load($type, $name,$params);
 	}
 	
 	/**

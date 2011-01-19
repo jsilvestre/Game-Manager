@@ -33,17 +33,22 @@ try {
 	
 	$gm->loadApplicationConfiguration(__DIR__.'/'.Application::P_CONFIG);
 
-	$gm->getContainer(Comp\Loader::T_LIBRARY)->offsetGet('router')->processRouting();	
+	$gm->getContainer(Comp\Loader::T_LIBRARY)->offsetGet('router')->processRouting();
 	
 	$gm->getContainer(Comp\Loader::T_LIBRARY)->offsetGet('hud')->create();
 	
 	$gm->getContainer(Comp\Loader::T_LIBRARY)->offsetGet('hud')->setRoutesToElements();
-		
+	
+	$gm->getContainer(Comp\Loader::T_LIBRARY)->offsetGet('hud')->render();
+	
+	foreach($gm->getResponse()->getAllContents() as $content) {
+		echo $content;
+	}
+	
 	$gm->uninit();
 }
 catch(Exception $e) {
-	echo $e.'<br /><br />';
-	echo $e->getMessage().'<br />'.$e->getLine().'<br />'.$e->getFile().'<br />';
+	echo get_class($e).': '.$e->getMessage().'<br />'.$e->getLine().'<br />'.$e->getFile().'<br />'.str_replace('#','<br />',$e->getTraceAsString());
 }
 catch(ErrorException $e) {
 	echo $e->getMessage();

@@ -53,7 +53,7 @@ class Hud extends Library implements \GameManager\Core\IDisplayObject {
 		
 			$defaultRoute = new Router\Route($id,$action,$method,$params); // we create the default route the HUD Element should load
 	
-			$hud_element = new HudElement($this,$id);
+			$hud_element = new HudElement($this,$id,$this->getContainer(Loader::T_ACTION));
 			$hud_element->setRoute($defaultRoute);
 		
 			$this->addElement($id,$hud_element); // we add the HudElement to the HudElements' array of the HUD		
@@ -131,7 +131,7 @@ class Hud extends Library implements \GameManager\Core\IDisplayObject {
 			$render = Router::T_COMPLETE_LOADING;
 		}
 		
-		return $rendu;
+		return $render;
 	}
 	
 	/**
@@ -165,14 +165,21 @@ class Hud extends Library implements \GameManager\Core\IDisplayObject {
 
 		$hudElementsRender = $this->_getHudElementsRender();
 		
-		/*$rendu = GameManager::getInstance()->load->view("base/layout/header_view",$header);
-
-		$url = array (array('detection','sample','test'),array('infos_perso','sample','test'));
-		$url2 = array (array('detection','sample','index'),array('infos_perso','sample','index'));
-		$rendu.= '<p>'.anchor("MyText",$url).' - '.anchor("MyText2",$url2).'</p>';
+		$appConf = $this->getContainer(Loader::T_CONFIG)->offsetGet(Application::N_CONFIG_APP);
 		
-		$rendu .= GameManager::getInstance()->load->view("base/layout/hud_view",$hudElementsRender);
-		$rendu .= GameManager::getInstance()->load->view("base/layout/footer_view");*/
+		$data = array(
+					'information'	=> $appConf['information']['meta'],
+					'css'			=> $appConf['css'],
+					'js'			=> $appConf['js']		
+				);
+		
+		$render.= $this->load(Loader::T_VIEW,'base/layout/header',$data);
+		$render.= $this->load(Loader::T_VIEW,'base/layout/hud',$hudElementsRender);
+		$render.= $this->load(Loader::T_VIEW,'base/layout/footer');
+		 		
+		/*$url = array (array('detection','sample','test'),array('infos_perso','sample','test'));
+		$url2 = array (array('detection','sample','index'),array('infos_perso','sample','index'));
+		$rendu.= '<p>'.anchor("MyText",$url).' - '.anchor("MyText2",$url2).'</p>';*/
 
 		return $render;
 	}
@@ -191,7 +198,7 @@ class Hud extends Library implements \GameManager\Core\IDisplayObject {
 					"element_render" => $element->render()
 				);
 				
-				$hudElementsRender[$element->getId()] = "";
+				$hudElementsRender[$element->getId()] = $this->load(Loader::T_VIEW,'base/hudElement',$data);
 				//$hudElementsRender[$element->getId()] = GameManager::getInstance()->load->view("base/framework/hudElement_view",$data);
 		}
 

@@ -25,12 +25,12 @@ class ConfigFactory extends Factory {
 	 * @throws \GameManager\Core\Exception\ConfigVarNotFoundEx if there is not the config var expected in the file 
 	 * @throws \UnexpectedValueException if the config var exists but it is not an array
 	 */
-	public function process($name) {
+	public function process($name,array $params=null) {
 		
 		if($name == Application::N_CONFIG_APP)
 			throw new RuntimeException("You can't load the ".Application::N_CONFIG_APP." config file : the application does it itself properly.");
 		
-		$folder = Application::getPath()."/game/configuration";
+		$folder = Application::getPath().$params['path'];
 		
 		$path = $folder.'/'.$name.'.php';
 
@@ -45,10 +45,7 @@ class ConfigFactory extends Factory {
 		if(!is_array(${$name}))
 			throw new \UnexpectedValueException("The var ".$name." has a wrong type. Given ".gettype(${$name}).", expected array.");
 									
-		return array(
-					'index'	=> $name,
-					'value'	=> ${$name}
-				);			
+		return ${$name};	
 	}
 	
 	

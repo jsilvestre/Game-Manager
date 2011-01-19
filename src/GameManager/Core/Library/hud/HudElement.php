@@ -13,8 +13,10 @@
 
 namespace GameManager\Core\Library\Hud;
 
-use GameManager\Core\Library\Router\Route;
 use \GameManager\Core\Library\Hud;
+use \GameManager\Core\Library\Router\Route;
+use \GameManager\Core\Exception\GameManagerEx;
+use \GameManager\Core\Component\Loader;
 
 class HudElement implements \GameManager\Core\IDisplayObject {
 	
@@ -41,12 +43,19 @@ class HudElement implements \GameManager\Core\IDisplayObject {
 	* Indicates if the hud element has been routed by a URL request
 	*/
 	private $_isRouted;
+	
+	/**
+	 * The action container of the application
+	 * @var Collection of Action
+	 */
+	private $_actionContainer;
 
 	/**
 	* Construct the object
 	*/
-	function __construct(Hud $hud,$id) {
-		$this->setHud($hud);		
+	function __construct(Hud $hud,$id,\GameManager\Core\Component\Collection $actionContainer) {
+		$this->setHud($hud);
+		$this->_actionContainer = $actionContainer;
 		$this->init($id);
 	}
 	
@@ -147,20 +156,23 @@ class HudElement implements \GameManager\Core\IDisplayObject {
 		if(empty($action)) // empty deals tests isset to
 			throw new InvalidRouteEx($this->getId(),$this->getRoute());
 		
-		if(!$this->getHud()->isActionLoaded($action))
-			$this->getHud()->load(Loader::T_ACTION,$action);
+		if(!$this->_actionContainer->offsetExists($action))
+			$loadedItem = $this->getHud()->load(Loader::T_ACTION,$action);
+		else
+			$loadedItem = $this->_actionContainer->offsetGet($action);
 		
 		// we catch the possible Exception and turn it into GameManagerEx
 		try {
-			$refl = new ReflectionMethod($action,$this->getRoute()->getMethod());
+			$refl = new \ReflectionMethod($loadedItem,$this->getRoute()->getMethod());
 			
-			$render = $refl->invokeArgs($this->getHud()->getContainer(Loader::T_ACTION)->offsetGet($action),$this->getRoute()->getParams());
+			// get the array (index,value) given by the method
+			$render = $refl->invokeArgs($this->_actionContainer->offsetGet($action),$this->getRoute()->getParams());
 		}
 		catch(Exception $e) {
 			throw new GameManagerEx("Class ".$action." : can't find method ".$this->getRoute()->getMethod()." or the method is inaccessible.");			
 		}
 			
-		if(!(isset($render)))
+		if(empty($render))
 			throw new GameManagerEx("The method ".$action.":".$this->getRoute()->getMethod()." doesn't return any result.");
 
 		return $render;

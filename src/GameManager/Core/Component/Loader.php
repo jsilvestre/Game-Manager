@@ -11,10 +11,13 @@
  * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
  * @link        http://game-manager.jsilvestre.fr
  * @since       1.0
- * @todo this class needs a strong documentation :)
  */
 
 namespace GameManager\Core\Component;
+
+use GameManager\Core\Exception\GameManagerEx;
+
+use GameManager\Core\Component\Loader\ViewFactory;
 
 use \GameManager\Core\Application;
 use GameManager\Core\Component\Loader\ConfigFactory;
@@ -55,7 +58,7 @@ class Loader {
 	protected $application = null;
 	
 	/**
-	 * Load an element to the application.
+	 * Load an item into the application.
 	 * @param string $type the type of the element to load (@see constants)
 	 * @param string $name
 	 * @param array $param optional arrays of param
@@ -63,40 +66,45 @@ class Loader {
 	 * @uses Loader::T_CONFIG
 	 * @uses Loader::T_ACTION
 	 * @dispatches loader.object_loaded event when a 'something' is loaded
+	 * @return mixed the loaded item
 	 */
-	function load($type,$name,array $param=null) {
+	function load($type,$name,array $params=null) {
+				
+		$factory = null;
+		$loadedItem = null;
 		
-		if(is_array($name)) {
-			foreach($name as $unit)
-				$this->load($type,$unit);
-		}	
-		else {
-			$loadedObject = null;
-			
-			switch($type) {				
-				case self::T_CONFIG :
-					$factory = new ConfigFactory($this->getApplication());
-					$loadedObject = $factory->process($name,'game/configuration/');
-					break;
-				case self::T_LIBRARY:
-					$factory = new ObjectFactory($this->getApplication());
-					$loadedObject = $factory->process($name,'GameManager\Core\Library\\');
-					break;
-				case self::T_ACTION:
-					$factory = new ObjectFactory($this->getApplication());
-					$module = $this->getApplication()->getRequest()->getInformation(Request::REQUEST_MODULE);
-					$loadedObject = $factory->process($name,'Module\\'.$module.'\Action\\');
-					break;
-				case self::T_VIEW:
-					echo "load view";
-					break;
-			}
-
-			if(!is_null($loadedObject)) {
-				$this->getApplication()->getContainer($type)->offsetSet($loadedObject['index'],$loadedObject['value']);
-				$this->getApplication()->getEventDispatcher()->notify(new \sfEvent($loadedObject,'loader.object_loaded'));
-			}
+		switch($type) {				
+			case self::T_CONFIG :
+				$factory = new ConfigFactory($this->getApplication());
+				$params = array('path'=>'game/configuration/');
+				break;
+			case self::T_LIBRARY:
+				$factory = new ObjectFactory($this->getApplication());
+				$params = array('namespace'=>'GameManager\Core\Library\\');
+				break;
+			case self::T_ACTION:
+				$factory = new ObjectFactory($this->getApplication());
+				$module = $this->getApplication()->getRequest()->getInformation(Request::REQUEST_MODULE);
+				$params = array('namespace'=>'\Game\Module\\'.$module.'\Action\\');
+				break;
+			case self::T_VIEW:
+				$factory = new ViewFactory($this->getApplication());
+				$module = $this->getApplication()->getRequest()->getInformation(Request::REQUEST_MODULE);
+				$params = array('module' => $module, 'data'=>$params);
+				break;
 		}
+		
+		if(is_null($factory))
+			throw new RuntimeException('There is no type item matching with '.$type.'.');
+			
+		$loadedItem = $factory->process($name,$params);
+
+		if(is_null($loadedItem))
+			throw new GameManagerEx('Nothing has been loaded. Name: '.$name.' - Type:'.$type.'.');
+			
+		$this->getApplication()->getEventDispatcher()->notify(new \sfEvent($loadedItem,'loader.object_loaded'));
+
+		return $loadedItem;
 	}
 	
 	/**

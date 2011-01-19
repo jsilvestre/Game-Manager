@@ -94,7 +94,10 @@ class Application {
 		$this->container = new Collection("GameManager\Core\Component\Collection");
 		$this->container->offsetSet(Loader::T_LIBRARY,new Collection("GameManager\Core\Library\Library"));
 		$this->container->offsetSet(Loader::T_CONFIG,new Collection("array"));
-		$this->container->offsetSet(Loader::T_ACTION,new Collection("Action"));
+		$this->container->offsetSet(Loader::T_ACTION,new Collection("GameManager\Core\Component\Action"));
+		/*$this->container = array(Loader::T_LIBRARY	=> array(),
+								 Loader::T_ACTION	=> array(),
+								 Loader::T_CONFIG	=> array());*/
 		// now we can easily add new containers for models, managers, ...
 	}
 	
@@ -106,7 +109,7 @@ class Application {
 	}
 	
 	/**
-	 * Alias the loading function of the Loader library object.
+	 * Load an item in the application. If $name is an array, the return array will be the one of the last value of the $name array.
 	 * @param string $type
 	 * @param string $name
 	 * @param array $params optional array of parameters
@@ -114,9 +117,30 @@ class Application {
 	 * @uses Loader::T_CONFIG
 	 * @uses Loader::T_ACTION
 	 * @see Loader::load()
+	 * @return mixed the loaded item
 	 */
 	function load($type,$name,array $params=null) {
-		$this->getLoader()->load($type,$name,$params);
+		
+		if(is_array($name)) {
+			$loadedItem = null;
+			
+			foreach($name as $unit) {
+				$loadedItem = $this->load($type,$unit,$params);
+			}
+		}	
+		else {		
+			$loadedItem = $this->getLoader()->load($type,$name,$params);
+			
+			switch($type) {
+				case Loader::T_ACTION:
+				case Loader::T_CONFIG:
+				case Loader::T_LIBRARY:
+					$this->getContainer($type)->offsetSet($name, $loadedItem);
+					break;
+			}
+		}
+		
+		return $loadedItem;
 	}
 
 	/**
@@ -188,6 +212,8 @@ class Application {
 				
 				if(!array_key_exists('default', $module))
 					throw new \RuntimeException('No default module set. Please set manually, via URL or in the config file a default module.');
+			
+				$this->getRequest()->setInformation(Request::REQUEST_MODULE,$module['id']);
 			}
 			else {
 				if(!array_key_exists($moduleName, $application))
@@ -220,6 +246,6 @@ class Application {
 	 * @static
 	 */
 	public static function getPath() {
-		return realpath(dirname(__FILE__) . '/../..').'/';
+		return realpath(dirname(__FILE__) . '/../../..').'/';
 	}
 }
