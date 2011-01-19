@@ -113,27 +113,35 @@ class Hud extends Library implements \GameManager\Core\IDisplayObject {
 	}
 	
 	/**
-	* Generate the hud render. If there is no request, we display the whole interface otherwise we create XML to answer the request.
-	* @return string
+	* Generate the hud render.
+	* @return string the type of answer : complete or part.
 	*/
 	function render() {
-		$rendu = "";
 
 		// if the request type is a part loading, we create the XML containing the answer
-		if($this->getRequest()->getInformation(Request::REQUEST_TYPE)==Router::T_PART_LOADING) {			
-			$rendu.= $this->_partRender();		
+		if($this->getRequest()->getInformation(Request::REQUEST_TYPE)==Router::T_PART_LOADING) {
+			$this->getResponse()->addHeader("Content-Type: text/xml");			
+			$this->getResponse()->addContent($this->_partRender());
+
+			$render = Router::T_PART_LOADING;
 		}
 		else { // otherwise, we render the whole page
-			$rendu.= $this->_completeRender();
+			$this->getResponse()->addContent($this->_completeRender());
+			
+			$render = Router::T_COMPLETE_LOADING;
 		}
 		
 		return $rendu;
 	}
 	
+	/**
+	 *  Generate the XML to answer the request
+	 *  @return string
+	 *  @access private
+	 */
 	private function _partRender() {
-		header("Content-Type: text/xml");		
 		
-		$rendu='<?xml version="1.0"?><answer>'; 
+		$rendu='<?xml version="1.0"?><response>'; 
 		
 		foreach($this->getAllElements() as $element) {
 			if($element->isRouted()) {
@@ -141,40 +149,52 @@ class Hud extends Library implements \GameManager\Core\IDisplayObject {
 			}
 		}
 		
-		$rendu.="</answer>";
+		$rendu.="</response>";
 
 		return $rendu;
 	}
 	
+	/**
+	 * Generate the whole interface
+	 * @return string
+	 * @access private
+	 */
 	private function _completeRender() {
 		
-		$hud_elements = array();
-			
-		foreach($this->getAllElements() as $element) {
-				$data = array (
-					"element_id" => $element->getId(),
-					"element_rendu" => $element->render()
-				);
+		$render = "";
 
-				$hud_elements[$element->getId()] = GameManager::getInstance()->load->view("base/framework/hudElement_view",$data);
-		}
+		$hudElementsRender = $this->_getHudElementsRender();
 		
-		$header = array(
-			'css' => GameManager::getInstance()->library('configuration')->getCss(),			
-			'javascript' => GameManager::getInstance()->library('configuration')->getJavascript()
-		);
-		
-		$header = array_merge(GameManager::getInstance()->library('configuration')->get('base'),$header);
-		
-		$rendu = GameManager::getInstance()->load->view("base/layout/header_view",$header);
+		/*$rendu = GameManager::getInstance()->load->view("base/layout/header_view",$header);
 
 		$url = array (array('detection','sample','test'),array('infos_perso','sample','test'));
 		$url2 = array (array('detection','sample','index'),array('infos_perso','sample','index'));
 		$rendu.= '<p>'.anchor("MyText",$url).' - '.anchor("MyText2",$url2).'</p>';
 		
-		$rendu .= GameManager::getInstance()->load->view("base/layout/hud_view",$hud_elements);
-		$rendu .= GameManager::getInstance()->load->view("base/layout/footer_view");
+		$rendu .= GameManager::getInstance()->load->view("base/layout/hud_view",$hudElementsRender);
+		$rendu .= GameManager::getInstance()->load->view("base/layout/footer_view");*/
 
-		return $rendu;
+		return $render;
+	}
+	
+	/**
+	 * Gets the hud elements array after rendering
+	 * @return array
+	 * @access private
+	 */
+	private function _getHudElementsRender() {
+		$hudElementsRender = array();
+			
+		foreach($this->getAllElements() as $element) {
+				$data = array (
+					"element_id" => $element->getId(),
+					"element_render" => $element->render()
+				);
+				
+				$hudElementsRender[$element->getId()] = "";
+				//$hudElementsRender[$element->getId()] = GameManager::getInstance()->load->view("base/framework/hudElement_view",$data);
+		}
+
+		return $hudElementsRender;
 	}
 }

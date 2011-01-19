@@ -1,5 +1,6 @@
 <?php
 
+use GameManager\Core\Component\Loader;
 include "bootstrap.php";
 
 use \GameManager\Core\Component as Comp;
@@ -36,7 +37,7 @@ try {
 	$gm->getContainer(Comp\Loader::T_LIBRARY)->offsetGet('hud')->create();
 	
 	$gm->getContainer(Comp\Loader::T_LIBRARY)->offsetGet('hud')->setRoutesToElements();
-	
+		
 	$gm->uninit();
 }
 catch(Exception $e) {

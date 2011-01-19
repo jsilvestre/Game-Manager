@@ -3,7 +3,7 @@
  * Loader class
  * 
  * Execute all the loading the application needs. It doesn't include the files : the symfony universal autoloader does it well.
- * This class works as a Factory.
+ * This class works as an Abstract Factory.
  *
  * @package     GameManager
  * @subpackage  Loader
@@ -15,6 +15,10 @@
  */
 
 namespace GameManager\Core\Component;
+
+use GameManager\Core\Component\Loader\ConfigFactory;
+
+use GameManager\Core\Component\Loader\ObjectFactory;
 
 use \GameManager\Core\Application;
 
@@ -39,6 +43,12 @@ class Loader {
 	const T_CONFIG = 'config';
 	
 	/**
+	 * The type of element to load : view
+	 * @staticvar string
+	 */
+	const T_VIEW = 'view';
+		
+	/**
 	 * The application object instance
 	 * @var GameManager
 	 * @access protected
@@ -47,14 +57,15 @@ class Loader {
 	
 	/**
 	 * Load an element to the application.
-	 * @param $type the type of the element to load (@see constants)
-	 * @param $name
+	 * @param string $type the type of the element to load (@see constants)
+	 * @param string $name
+	 * @param array $param optional arrays of param
 	 * @uses Loader::T_LIBRARY
 	 * @uses Loader::T_CONFIG
 	 * @uses Loader::T_ACTION
-	 * @dispatches loader.object_loaded event when a something is loaded
+	 * @dispatches loader.object_loaded event when a 'something' is loaded
 	 */
-	function load($type,$name) {
+	function load($type,$name,array $param=null) {
 		
 		if(is_array($name)) {
 			foreach($name as $unit)
@@ -65,16 +76,24 @@ class Loader {
 			
 			switch($type) {				
 				case self::T_CONFIG :
-					$loadedObject = $this->loadConfig($type,$name);
+					//$loadedObject = $this->loadConfig($type,$name);
+					$factory = new ConfigFactory($this->getApplication());
+					$loadedObject = $factory->process($name,'game/configuration/');
 					break;
 				case self::T_LIBRARY:
+					$factory = new ObjectFactory($this->getApplication());
+					$loadedObject = $factory->process($name,'GameManager\Core\Library\\');
+					break;
 				case self::T_ACTION:
-					$loadedObject = $this->loadClass($type,$name,'GameManager\Core\Library\\');
+					break;
+				case self::T_VIEW:
+					echo "load view";
 					break;
 			}
 
 			if(!is_null($loadedObject)) {
-				$this->getApplication()->getEventDispatcher()->notify(new sfEvent($loadedObject,'loader.object_loaded'));
+				$this->getApplication()->getContainer($type)->offsetSet($loadedObject['index'],$loadedObject['value']);
+				$this->getApplication()->getEventDispatcher()->notify(new \sfEvent($loadedObject,'loader.object_loaded'));
 			}
 		}
 	}

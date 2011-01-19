@@ -108,15 +108,16 @@ class Application {
 	
 	/**
 	 * Alias the loading function of the Loader library object.
-	 * @param $type
-	 * @param $name
+	 * @param string $type
+	 * @param string $name
+	 * @param array $params optional array of parameters
 	 * @uses Loader::T_LIBRARY
 	 * @uses Loader::T_CONFIG
 	 * @uses Loader::T_ACTION
 	 * @see Loader::load()
 	 */
-	function load($type,$name) {
-		$this->getLoader()->load($type, $name);
+	function load($type,$name,array $params=null) {
+		$this->getLoader()->load($type,$name,$params);
 	}
 
 	/**

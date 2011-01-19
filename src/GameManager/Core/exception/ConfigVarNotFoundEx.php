@@ -11,6 +11,8 @@
  * @since       1.0
  */
 
+namespace GameManager\Core\Exception;
+
 class ConfigVarNotFoundEx extends GameManagerEx {
 	
 	/**
