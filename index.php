@@ -1,6 +1,5 @@
 <?php
 
-use GameManager\Core\Component\Loader;
 include "bootstrap.php";
 
 use \GameManager\Core\Component as Comp;
