@@ -76,7 +76,7 @@ class Collection extends \ArrayObject {
 	public function offsetSet($index, $newval) {
 		
 		if($this->isTypeValid($newval)) {				
-			parent::offsetSet($index, $newval);
+			parent::offsetSet(strtolower($index), $newval);
 		}
 		else {
 			if(is_object($newval)) {
