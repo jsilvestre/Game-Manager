@@ -14,6 +14,8 @@
 
 namespace GameManager\Core;
 
+use GameManager\Core\Component\Dumper\ConfigDumper;
+
 use \GameManager\Core\Component\Request;
 use \GameManager\Core\Component\Response;
 use \GameManager\Core\Component\Loader;
@@ -228,6 +230,11 @@ class Application {
 			// create the dumper
 			// dump the $target.'.xml' file to the $target.'.php' file
 			// call this function recursively in order to set the configuration array
+			
+			$dumper = new ConfigDumper($path.'/'.self::N_CONFIG_APP);
+			$dumper->dump();
+			
+			$this->loadApplicationConfiguration($path);
 		}
 	}
 	

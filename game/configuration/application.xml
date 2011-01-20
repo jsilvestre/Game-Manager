@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <application>
-	<module name="game or admin or something : must match the folder name" default="true">
+	<module name="sample" default="true">
 		<information>
 			<meta>
 				<tag type="title" value="Le titre" />
@@ -29,16 +29,16 @@
 				<target action="sample" method="index" />
 			</element>	
 			<element id="principal">
-				<target action="sample" method="test" />
+				<target action="sample" method="index" />
 			</element>	
 			<element id="menu">
-				<target action="sample" method="test" />
+				<target action="sample" method="index" />
 			</element>	
 			<element id="deplacement">
 				<target action="sample" method="index" />
 			</element>	
 			<element id="meteo">
-				<target action="sample" method="test" />
+				<target action="sample" method="index" />
 			</element>
 		</interface>
 	</module>
