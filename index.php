@@ -13,15 +13,12 @@ set_error_handler("exception_error_handler");
 session_start();
 
 try {
-	
-	$default_module = "module2";
+	// you can specify a default module here. Configuration default module will be ignored. 
 	$default_module = null;
 	
 	$dispatcher = new sfEventDispatcher();
 	$request = new Comp\Request($default_module);
-	$response = new Comp\Response();
-	
-	
+	$response = new Comp\Response();	
 	$loader = new Comp\Loader();
 
 	$gm = new \GameManager\Core\Application($dispatcher,$request,$response,$loader);

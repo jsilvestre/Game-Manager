@@ -2,7 +2,7 @@
 /**
  * The main class of the application
  * 
- * Deals with all the aspect of the framework in order to make it works :-)
+ * Deals with all the aspects of the framework in order to make it works :-)
  *
  * @package     GameManager
  * @subpackage  Application
@@ -227,10 +227,7 @@ class Application {
 			$this->getContainer(Loader::T_CONFIG)->offsetSet(self::N_CONFIG_APP,$application[$module['id']]);
 		}
 		else {
-			// create the dumper
-			// dump the $target.'.xml' file to the $target.'.php' file
-			// call this function recursively in order to set the configuration array
-			
+			// creates the dumper and dumps the $target.'.xml' file into the $target.'.php' file			
 			$dumper = new ConfigDumper($path.'/'.self::N_CONFIG_APP);
 			$dumper->dump();
 			
@@ -239,7 +236,7 @@ class Application {
 	}
 	
 	/**
-	 * Call all the uninit method of the library
+	 * Calls all the uninit method of the library
 	 */
 	public function uninit() {
 		foreach($this->getContainer(Loader::T_LIBRARY) as $lib) {
